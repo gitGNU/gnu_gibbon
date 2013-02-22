@@ -106,7 +106,6 @@ gibbon_SOURCES = 			\
         gibbon-chat.c			\
         gibbon-chat-view.c		\
         gibbon-client-icons.c		\
-        gibbon-clip.c			\
 	gibbon-clip-lexer.l		\
         gibbon-clip-reader.c		\
         gibbon-connection.c		\
@@ -155,7 +154,6 @@ noinst_HEADERS =			\
         gibbon-chat.h			\
         gibbon-chat-view.h		\
         gibbon-client-icons.h		\
-        gibbon-clip.h			\
 	gibbon-clip-reader.h		\
 	gibbon-clip-reader-priv.h	\
         gibbon-connection.h		\

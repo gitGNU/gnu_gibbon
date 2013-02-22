@@ -39,7 +39,7 @@
 #include "gibbon-game-chat.h"
 #include "gibbon-archive.h"
 #include "gibbon-util.h"
-#include "gibbon-clip.h"
+#include "gibbon-clip-reader.h"
 #include "gibbon-saved-info.h"
 #include "gibbon-reliability.h"
 #include "gibbon-client-icons.h"
@@ -93,10 +93,9 @@ static gint gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_error (GibbonSession *self, GSList *iter);
-static gint gibbon_session_handle_error_no_user (GibbonSession *self,
-                                                 GSList *iter);
+static gint gibbon_session_handle_no_such_user (GibbonSession *self,
+                                                GSList *iter);
 static gint gibbon_session_handle_board (GibbonSession *self, GSList *iter);
-static gint gibbon_session_handle_bad_board (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_rolls (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_moves (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_invitation (GibbonSession *self,
@@ -124,8 +123,8 @@ static gint gibbon_session_handle_show_saved_count (GibbonSession *self,
                                                     GSList *iter);
 static gint gibbon_session_handle_show_address (GibbonSession *self,
                                                 GSList *iter);
-static gint gibbon_session_handle_address_error (GibbonSession *self,
-                                                 GSList *iter);
+static gint gibbon_session_handle_invalid_address (GibbonSession *self,
+                                                   GSList *iter);
 static gint gibbon_session_handle_left_game (GibbonSession *self,
                                              GSList *iter);
 static gint gibbon_session_handle_cannot_move (GibbonSession *self,
@@ -173,6 +172,7 @@ static void gibbon_session_check_address (GibbonSession *self,
 struct _GibbonSessionPrivate {
         GibbonApp *app;
         GibbonConnection *connection;
+        GibbonCLIPReader *clip_reader;
 
         gchar *watching;
         gchar *opponent;
@@ -238,6 +238,7 @@ gibbon_session_init (GibbonSession *self)
                                                   GibbonSessionPrivate);
 
         self->priv->connection = NULL;
+        self->priv->clip_reader = NULL;
         self->priv->watching = NULL;
         self->priv->opponent = NULL;
         self->priv->available = FALSE;
@@ -361,6 +362,9 @@ gibbon_session_finalize (GObject *object)
 
         if (self->priv->saved_games)
                 g_hash_table_destroy (self->priv->saved_games);
+
+        if (self->priv->clip_reader)
+                g_object_unref (self->priv->clip_reader);
 }
 
 static void
@@ -384,6 +388,7 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         GError *error = NULL;
 
         self->priv->connection = connection;
+        self->priv->clip_reader = gibbon_clip_reader_new ();
         self->priv->app = app;
 
         self->priv->debug_board_state = gibbon_debug ("board-state");
@@ -488,19 +493,20 @@ gibbon_session_process_server_line (GibbonSession *self,
                 return -1;
         }
 
-        values = gibbon_clip_parse (line);
+        values = gibbon_clip_reader_parse (self->priv->clip_reader, line);
         if (!values)
                 return -1;
 
         iter = values;
-        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
-                                  (gint *) &code)) {
-                gibbon_clip_free_result (iter);
+        if (!gibbon_clip_reader_get_int (self->priv->clip_reader, &iter,
+                                         (gint *) &code)) {
+                gibbon_clip_reader_free_result (self->priv->clip_reader, iter);
                 return -1;
         }
 
         switch (code) {
         case GIBBON_CLIP_UNHANDLED:
+        case GIBBON_CLIP_UNKNOWN_MESSAGE:
                 break;
         case GIBBON_CLIP_WELCOME:
                 retval = gibbon_session_clip_welcome (self, iter);
@@ -575,9 +581,6 @@ gibbon_session_process_server_line (GibbonSession *self,
                 }
                 retval = gibbon_session_handle_board (self, iter);
                 break;
-        case GIBBON_CLIP_BAD_BOARD:
-                retval = gibbon_session_handle_bad_board (self, iter);
-                break;
         case GIBBON_CLIP_ROLLS:
                 retval = gibbon_session_handle_rolls (self, iter);
                 break;
@@ -589,6 +592,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = GIBBON_CLIP_START_GAME;
                 break;
         case GIBBON_CLIP_LEFT_GAME:
+        case GIBBON_CLIP_DROPS_GAME:
                 retval = gibbon_session_handle_left_game (self, iter);
                 break;
         case GIBBON_CLIP_CANNOT_MOVE:
@@ -720,13 +724,27 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_SHOW_ADDRESS:
                 retval = gibbon_session_handle_show_address (self, iter);
                 break;
+        case GIBBON_CLIP_MOTD:
+                /* FIXME! Returning -1 here causes the motto of the day to
+                 * be displayed in the server console.  Instead, display it
+                 * in a dialog box, with a checkbox that allows to redirect
+                 * it to the server console in the future.
+                 */
+                retval = -1;
+                break;
+        case GIBBON_CLIP_NO_SUCH_USER:
+                retval = gibbon_session_handle_no_such_user (self, iter);
+                break;
+        case GIBBON_CLIP_INVALID_ADDRESS:
+                retval = gibbon_session_handle_invalid_address (self, iter);
+                break;
         case GIBBON_CLIP_HEARD_YOU:
                 /* Ignored.  */
                 retval = code;
                 break;
         }
 
-        gibbon_clip_free_result (values);
+        gibbon_clip_reader_free_result (self->priv->clip_reader, values);
 
         return retval;
 }
@@ -742,8 +760,9 @@ gibbon_session_clip_welcome (GibbonSession *self, GSList *iter)
         gchar *last_login_str;
         gchar *reply;
         GibbonServerConsole *console;
+        GibbonCLIPReader *clip_reader = self->priv->clip_reader;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &login))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &login))
                 return -1;
 
         expect = gibbon_connection_get_login (self->priv->connection);
@@ -751,13 +770,13 @@ gibbon_session_clip_welcome (GibbonSession *self, GSList *iter)
                 return -1;
 
         last_login.tv_usec = 0;
-        if (!gibbon_clip_get_uint64 (&iter, GIBBON_CLIP_TYPE_TIMESTAMP,
-                                     (guint64 *) &tv_sec))
+        if (!gibbon_clip_reader_get_int64 (clip_reader, &iter,
+                                           (gint64 *) &tv_sec))
                 return -1;
         last_login.tv_sec = tv_sec;
         
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
-                                     &last_from))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter,
+                                            &last_from))
                 return -1;
 
         /* FIXME! Isn't there a better way to format a date and time
@@ -786,72 +805,53 @@ gibbon_session_clip_own_info (GibbonSession *self, GSList *iter)
         gboolean greedy, moreboards, moves, notify;
         gdouble rating;
         gboolean ratings, ready;
-        gint redoubles;
+        gint64 redoubles;
         gboolean report, silent;
         const gchar *timezone;
+        GibbonCLIPReader *clip_reader = self->priv->clip_reader;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
-                                     &login))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &login))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &allowpip))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &allowpip))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &autoboard))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &autoboard))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &autodouble))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &autodouble))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &automove))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &automove))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &away))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &away))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &bell))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &bell))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &crawford))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &crawford))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &dbl))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &dbl))
                 return -1;
-        if (!gibbon_clip_get_uint64 (&iter, GIBBON_CLIP_TYPE_UINT,
-                                     &experience))
+        if (!gibbon_clip_reader_get_int64 (clip_reader, &iter,
+                                           (gint64 *) &experience))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &greedy))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &greedy))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &moreboards))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &moreboards))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &moves))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &moves))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &notify))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter,  &notify))
                 return -1;
-        if (!gibbon_clip_get_double (&iter, GIBBON_CLIP_TYPE_DOUBLE,
-                                     &rating))
+        if (!gibbon_clip_reader_get_double (clip_reader, &iter, &rating))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &ratings))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &ratings))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &ready))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &ready))
                 return -1;
-        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
-                                  &redoubles))
+        if (!gibbon_clip_reader_get_int64 (clip_reader, &iter, &redoubles))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &report))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &report))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &silent))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &silent))
                 return -1;
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
-                                     &timezone))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &timezone))
                 return -1;
 
         if (!notify)
@@ -897,52 +897,47 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gboolean has_saved;
         GibbonSavedInfo *saved_info;
         GError *error = NULL;
+        GibbonCLIPReader *clip_reader = self->priv->clip_reader;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &who))
                 return -1;
 
         gibbon_session_unqueue_who_request (self, who);
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &opponent))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &opponent))
                 return -1;
         if (opponent[0] == '-' && opponent[1] == 0)
                 opponent = "";
                 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &watching))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &watching))
                 return -1;
         if (watching[0] == '-' && watching[1] == 0)
                 watching = "";
 
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &ready))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &ready))
                 return -1;
 
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &away))
+        if (!gibbon_clip_reader_get_boolean (clip_reader, &iter, &away))
                 return -1;
 
-        if (!gibbon_clip_get_double (&iter, GIBBON_CLIP_TYPE_DOUBLE,
-                                     &rating))
+        if (!gibbon_clip_reader_get_double (clip_reader, &iter, &rating))
                 return -1;
 
-        if (!gibbon_clip_get_uint64 (&iter, GIBBON_CLIP_TYPE_UINT,
-                                     &experience))
+        if (!gibbon_clip_reader_get_int64 (clip_reader, &iter,
+                                           (gint64 *) &experience))
                 return -1;
 
         iter = iter->next;
         iter = iter->next;
         
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
-                                     &hostname))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &hostname))
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
-                                     &raw_client))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &raw_client))
                 return -1;
         client = gibbon_session_decode_client (self, raw_client);
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
-                                     &current_email))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &current_email))
                 return -1;
 
         available = ready && !away && !opponent[0];
@@ -1080,7 +1075,8 @@ gibbon_session_clip_login (GibbonSession *self, GSList *iter)
 {
         const gchar *name;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &name))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &name))
                 return -1;
 
         gibbon_session_queue_who_request (self, name);
@@ -1099,7 +1095,8 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
         guint match_length;
         guint scores[2];
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &name))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &name))
                 return -1;
 
         gibbon_session_unqueue_who_request (self, name);
@@ -1158,14 +1155,15 @@ gibbon_session_clip_message (GibbonSession *self, GSList *iter)
        gint64 when;
        GTimeVal last_login;
        gchar *last_login_str;
+       GibbonCLIPReader *clip_reader = self->priv->clip_reader;
 
-       if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+       if (!gibbon_clip_reader_get_string (clip_reader, &iter, &sender))
                return -1;
 
-       if (!gibbon_clip_get_int64 (&iter, GIBBON_CLIP_TYPE_TIMESTAMP, &when))
+       if (!gibbon_clip_reader_get_int64 (clip_reader, &iter, &when))
                return -1;
 
-       if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+       if (!gibbon_clip_reader_get_string (clip_reader, &iter, &message))
                return -1;
 
        last_login_str = ctime (&last_login.tv_sec);
@@ -1183,7 +1181,8 @@ gibbon_session_clip_message_delivered (GibbonSession *self, GSList *iter)
 {
        const gchar *recipient;
 
-       if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &recipient))
+       if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                           &recipient))
                return -1;
 
        gibbon_app_display_info (self->priv->app, NULL,
@@ -1199,7 +1198,8 @@ gibbon_session_clip_message_saved (GibbonSession *self, GSList *iter)
 {
        const gchar *recipient;
 
-       if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &recipient))
+       if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                           &recipient))
                return -1;
 
        gibbon_app_display_info (self->priv->app, NULL,
@@ -1223,10 +1223,12 @@ gibbon_session_clip_says (GibbonSession *self, GSList *iter)
         if (!connection)
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &sender))
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &message))
                 return -1;
 
         fibs_message = gibbon_fibs_message_new (sender, message);
@@ -1266,10 +1268,12 @@ gibbon_session_clip_alerts (GibbonSession *self, GSList *iter)
         if (!connection)
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &sender))
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &message))
                 return -1;
 
         fibs_message = gibbon_fibs_message_new (sender, message);
@@ -1298,10 +1302,12 @@ gibbon_session_clip_shouts (GibbonSession *self, GSList *iter)
         if (!shouts)
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &sender))
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &message))
                 return -1;
 
         fibs_message = gibbon_fibs_message_new (sender, message);
@@ -1325,10 +1331,12 @@ gibbon_session_clip_whispers (GibbonSession *self, GSList *iter)
         if (!game_chat)
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &sender))
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &message))
                 return -1;
 
         fibs_message = gibbon_fibs_message_new (sender, message);
@@ -1352,10 +1360,12 @@ gibbon_session_clip_kibitzes (GibbonSession *self, GSList *iter)
         if (!game_chat)
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &sender))
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &message))
                 return -1;
 
         fibs_message = gibbon_fibs_message_new (sender, message);
@@ -1373,7 +1383,7 @@ gibbon_session_clip_you_say (GibbonSession *self, GSList *iter)
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
         const gchar *sender;
-        const gchar *receiver;
+        const gchar *recipient;
         const gchar *message;
         GibbonGameChat *game_chat;
 
@@ -1385,16 +1395,18 @@ gibbon_session_clip_you_say (GibbonSession *self, GSList *iter)
         if (!sender)
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &receiver))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &recipient))
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &message))
                 return -1;
 
         fibs_message = gibbon_fibs_message_new (sender, message);
 
         if (self->priv->opponent && !self->priv->watching
-            && 0 == g_strcmp0 (self->priv->opponent, receiver)) {
+            && 0 == g_strcmp0 (self->priv->opponent, recipient)) {
                 game_chat = gibbon_app_get_game_chat (self->priv->app);
                 if (!game_chat) {
                         gibbon_fibs_message_free (fibs_message);
@@ -1402,8 +1414,7 @@ gibbon_session_clip_you_say (GibbonSession *self, GSList *iter)
                 }
                 gibbon_game_chat_append_message (game_chat, fibs_message);
         } else {
-                gibbon_app_show_message (self->priv->app,
-                                         receiver,
+                gibbon_app_show_message (self->priv->app, recipient,
                                          fibs_message);
         }
 
@@ -1425,7 +1436,8 @@ gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter)
         if (!connection)
                 return FALSE;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &message))
                 return -1;
 
         sender = gibbon_connection_get_login (connection);
@@ -1454,7 +1466,8 @@ gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter)
         if (!sender)
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &message))
                 return -1;
 
         fibs_message = gibbon_fibs_message_new (sender, message);
@@ -1482,7 +1495,8 @@ gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter)
         if (!sender)
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &message))
                 return -1;
 
         fibs_message = gibbon_fibs_message_new (sender, message);
@@ -1516,30 +1530,14 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
 {
         GibbonPosition *pos;
         GibbonBoard *board;
-        gint i, tmp;
+        gint tmp;
         GibbonConnection *connection;
-        const gchar *str;
-        gint retval = -1;
-        gboolean is_crawford = FALSE;
-        gboolean post_crawford, no_crawford;
         const gchar *login = NULL;
         const GibbonPosition *current;
 
-        pos = gibbon_position_new ();
-        if (self->priv->position) {
-                if (self->priv->position->game_info)
-                        pos->game_info =
-                                g_strdup (self->priv->position->game_info);
-                if (self->priv->position->status)
-                        pos->status = g_strdup (self->priv->position->status);
-        }
+        pos = gibbon_position_copy (g_value_get_boxed (iter->data));
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &str))
-                goto bail_out_board;
-
-        if (g_strcmp0 ("You", str)) {
-                pos->players[0] = g_strdup (str);
-        } else {
+        if (!g_strcmp0 ("You", pos->players[0])) {
                 connection = gibbon_app_get_connection (self->priv->app);
                 login = gibbon_connection_get_login (connection);
                 pos->players[0] = g_strdup (login);
@@ -1547,113 +1545,18 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                         gibbon_session_stop_playing (self);
         }
         
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &str))
-                goto bail_out_board;
-
-        pos->players[1] = g_strdup (str);
         if (g_strcmp0 (self->priv->opponent, pos->players[1])) {
                 g_free (self->priv->opponent);
                 self->priv->opponent = g_strdup (pos->players[1]);
         }
         
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
-                                   &pos->match_length))
-                goto bail_out_board;
         if (pos->match_length > 99)
                 pos->match_length = 0;
 
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
-                                   &pos->scores[0]))
-                goto bail_out_board;
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
-                                   &pos->scores[1]))
-                goto bail_out_board;
-
-        for (i = 0; i < 24; ++i) {
-                if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
-                                          &pos->points[i]))
-                        goto bail_out_board;
-        }
-
-        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
-                                  &pos->turn))
-                goto bail_out_board;
-
-        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
-                                  &pos->dice[0]))
-                goto bail_out_board;
-        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
-                                  &pos->dice[1]))
-                goto bail_out_board;
-
-        pos->dice[0] = abs (pos->dice[0]);
-        pos->dice[1] = abs (pos->dice[1]);
-
-        if ((pos->dice[0] > 0 && pos->dice[0] < pos->dice[1])
-            || (pos->dice[0] < 0 && pos->dice[0] > pos->dice[1])) {
-                tmp = pos->dice[0];
-                pos->dice[0] = pos->dice[1];
-                pos->dice[1] = tmp;
-        }
-
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
-                                   &pos->cube))
-                goto bail_out_board;
-
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &pos->may_double[0]))
-                goto bail_out_board;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &pos->may_double[1]))
-                goto bail_out_board;
-
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &self->priv->direction))
-                goto bail_out_board;
-
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
-                                   &pos->bar[0]))
-                goto bail_out_board;
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
-                                   &pos->bar[1]))
-                goto bail_out_board;
-        
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &no_crawford))
-                goto bail_out_board;
-
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &post_crawford))
-                goto bail_out_board;
-
-        if (pos->match_length
-            && (pos->scores[0] == pos->match_length - 1
-                || pos->scores[1] == pos->match_length - 1)) {
-                if (no_crawford) {
-                        gibbon_match_tracker_set_crawford (self->priv->tracker,
-                                                           FALSE);
-                } else if (post_crawford) {
-                        pos->game_info = g_strdup (_("Post-Crawford game"));
-                } else {
-                        pos->game_info = g_strdup (_("Crawford game"));
-                        is_crawford = TRUE;
-                        pos->may_double[0] = FALSE;
-                        pos->may_double[1] = FALSE;
-                }
-        }
-
         /*
-         * If one of the opponents turned the cube, the value of both dice
-         * is 0 (of course), and FIBS will set the may_double flag of both
-         * players to false.
+         * FIXME! We have to call gibbon_match_tracker_set_crawford() if
+         * this is the crawford game.
          */
-        if (!is_crawford
-            && !pos->dice[0] && !pos->dice[1]
-            && !pos->may_double[0] && !pos->may_double[1]) {
-                pos->cube_turned = self->priv->position->turn;
-        } else if (pos->turn) {
-                gibbon_position_reset_unused_dice (pos);
-        }
 
         if (!memcmp (pos->points, (gibbon_position_initial ())->points,
                      sizeof (pos->points))) {
@@ -1739,19 +1642,15 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         }
 
         return GIBBON_CLIP_BOARD;
-
-bail_out_board:
-        gibbon_position_free (pos);
-
-        return retval;
 }
 
 static gboolean
-gibbon_session_handle_error_no_user (GibbonSession *self, GSList *iter)
+gibbon_session_handle_no_such_user (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &who))
                 return -1;
 
         gibbon_session_unqueue_who_request (self, who);
@@ -1761,31 +1660,13 @@ gibbon_session_handle_error_no_user (GibbonSession *self, GSList *iter)
         return GIBBON_CLIP_ERROR;
 }
 
-static gboolean
-gibbon_session_handle_bad_board (GibbonSession *self, GSList *iter)
-{
-        const gchar *board;
-        const gchar *other;
-
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &board))
-                return -1;
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &other))
-                return -1;
-
-        if (0 > gibbon_session_process_server_line (self, board))
-                return -1;
-        if (0 > gibbon_session_process_server_line (self, other))
-                return -1;
-
-        return GIBBON_CLIP_BAD_BOARD;
-}
-
 static gint
 gibbon_session_handle_youre_watching (GibbonSession *self, GSList *iter)
 {
         const gchar *player;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &player))
                 return -1;
 
         gibbon_session_stop_playing (self);
@@ -1803,10 +1684,11 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
         guint length;
         const gchar *player;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &opponent))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &opponent))
                 return -1;
-        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
-                                  (gint*) &length))
+        if (!gibbon_clip_reader_get_int (self->priv->clip_reader, &iter,
+                                        (gint*) &length))
                 return -1;
 
         g_free (self->priv->opponent);
@@ -1839,9 +1721,11 @@ gibbon_session_handle_invite_error (GibbonSession *self, GSList *iter)
         const gchar *player;
         const gchar *message;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &player))
                 return -1;
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &message))
                 return -1;
 
         gibbon_inviter_list_remove (self->priv->inviter_list, player);
@@ -1859,7 +1743,8 @@ gibbon_session_handle_resume (GibbonSession *self, GSList *iter)
         const gchar *login;
         guint port;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &player))
                 return -1;
 
         gibbon_session_stop_playing (self);
@@ -1948,10 +1833,12 @@ gibbon_session_handle_async_win_match (GibbonSession *self, GSList *iter)
         const gchar *player1;
         const gchar *player2;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player1))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &player1))
                 return -1;
         gibbon_session_queue_who_request (self, player1);
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player2))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &player2))
                 return -1;
         gibbon_session_queue_who_request (self, player2);
 
@@ -1972,10 +1859,12 @@ gibbon_session_handle_resume_match (GibbonSession *self, GSList *iter)
         const gchar *player1;
         const gchar *player2;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player1))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &player1))
                 return -1;
         gibbon_session_queue_who_request (self, player1);
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player2))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &player2))
                 return -1;
         gibbon_session_queue_who_request (self, player2);
 
@@ -1995,13 +1884,14 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         guint dice[2];
         guint tmp;
         GibbonPosition *pos;
+        GibbonCLIPReader *clip_reader = self->priv->clip_reader;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &who))
                 return -1;
 
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &dice[0]))
+        if (!gibbon_clip_reader_get_int (clip_reader, &iter, (gint *) &dice[0]))
                 return -1;
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &dice[1]))
+        if (!gibbon_clip_reader_get_int (clip_reader, &iter, (gint *) &dice[1]))
                 return -1;
 
         if (0 == g_strcmp0 ("You", who)) {
@@ -2072,12 +1962,12 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
         guint num_moves;
         GibbonBoard *board;
         GibbonPosition *target_position;
+        GibbonCLIPReader *clip_reader = self->priv->clip_reader;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &player))
                 return -1;
 
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &num_moves))
-                return -1;
+        num_moves = g_slist_length (iter) >> 1;
 
         if (g_strcmp0 (player, self->priv->opponent))
                 side = GIBBON_POSITION_SIDE_WHITE;
@@ -2088,13 +1978,13 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
 
         for (i = 0; i < num_moves; ++i) {
                 movement = move->movements + move->number++;
-                if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
-                                          &movement->from)) {
+                if (!gibbon_clip_reader_get_int (clip_reader, &iter,
+                                                 &movement->from)) {
                         g_object_unref (move);
                         return -1;
                 }
-                if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
-                                          &movement->to)) {
+                if (!gibbon_clip_reader_get_int (clip_reader, &iter,
+                                                 &movement->to)) {
                         g_object_unref (move);
                         return -1;
                 }
@@ -2207,12 +2097,12 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
         gboolean has_saved;
         struct GibbonSessionSavedCountCallbackInfo *info;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
-                                     &opponent))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &opponent))
                 return -1;
 
-        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
-                                   &length))
+        if (!gibbon_clip_reader_get_int (self->priv->clip_reader, &iter,
+                                         &length))
                 return -1;
 
         pl = self->priv->player_list;
@@ -2312,9 +2202,11 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
         gboolean check_queues = FALSE;
         gboolean force_queues = FALSE;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &key))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &key))
                 return -1;
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &value))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &value))
                 return -1;
 
         /* The only setting we are interested in is "boardstyle".  */
@@ -2358,9 +2250,11 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
         gboolean value;
         gboolean check_queue = FALSE;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &key))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &key))
                 return -1;
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN, &value))
+        if (!gibbon_clip_reader_get_boolean (self->priv->clip_reader, &iter,
+                                             &value))
                 return -1;
 
         if (0 == g_strcmp0 ("notify", key)) {
@@ -2393,18 +2287,22 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
         const gchar *opponent;
         guint match_length, scores[2];
         GibbonSavedInfo *info;
+        GibbonCLIPReader *clip_reader = self->priv->clip_reader;
 
         if (self->priv->expect_saved)
                 gibbon_session_check_expect_queues (self, TRUE);
         self->priv->expect_saved = FALSE;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &opponent))
+        if (!gibbon_clip_reader_get_string (clip_reader, &iter, &opponent))
                 return -1;
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &match_length))
+        if (!gibbon_clip_reader_get_int (clip_reader, &iter,
+                                         (gint *) &match_length))
                 return -1;
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &scores[0]))
+        if (!gibbon_clip_reader_get_int (clip_reader, &iter,
+                                         (gint *) &scores[0]))
                 return -1;
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &scores[1]))
+        if (!gibbon_clip_reader_get_int (clip_reader, &iter,
+                                         (gint *) &scores[1]))
                 return -1;
 
         info = gibbon_saved_info_new (opponent, match_length,
@@ -2431,10 +2329,12 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
         GSList *iter2;
         struct GibbonSessionSavedCountCallbackInfo *info;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &who))
                 return -1;
 
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &count))
+        if (!gibbon_clip_reader_get_int (self->priv->clip_reader, &iter,
+                                         (gint *) &count))
                 return -1;
 
         /*
@@ -2487,8 +2387,8 @@ gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
 
         self->priv->saved_finished = TRUE;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
-                                     &address)) {
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &address)) {
                 self->priv->expect_address = FALSE;
                 return -1;
         }
@@ -2504,7 +2404,7 @@ gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
 }
 
 static gint
-gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
+gibbon_session_handle_invalid_address (GibbonSession *self, GSList *iter)
 {
         const gchar *address;
 
@@ -2519,14 +2419,15 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
 
         self->priv->expect_address = FALSE;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &address))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &address))
                 return -1;
 
         gibbon_app_display_error(self->priv->app, NULL,
                                  _("The email address `%s' was rejected by"
                                    " the server!"), address);
 
-        return GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS;
+        return GIBBON_CLIP_INVALID_ADDRESS;
 }
 
 static gint
@@ -2542,7 +2443,8 @@ gibbon_session_handle_left_game (GibbonSession *self, GSList *iter)
         if (self->priv->watching)
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &who))
                 return -1;
 
         if (0 == g_strcmp0 (who, self->priv->opponent)) {
@@ -2601,7 +2503,8 @@ gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
         gboolean must_fade = FALSE;
         GibbonBoard *board;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &who))
                 return -1;
 
         if (0 == g_strcmp0 (self->priv->opponent, who)) {
@@ -2646,7 +2549,8 @@ gibbon_session_handle_doubles (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &who))
                 return -1;
 
         if (0 == g_strcmp0 (self->priv->opponent, who)) {
@@ -2676,7 +2580,8 @@ gibbon_session_handle_accepts_double (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &who))
                 return -1;
 
         self->priv->position->cube_turned = GIBBON_POSITION_SIDE_NONE;
@@ -2720,10 +2625,12 @@ gibbon_session_handle_resigns (GibbonSession *self, GSList *iter)
         if (!self->priv->position->cube)
                 return -1;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &who))
                 return -1;
 
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &points))
+        if (!gibbon_clip_reader_get_int (self->priv->clip_reader, &iter,
+                                         (gint *) &points))
                 return -1;
 
         if (points < 1 || points > 3)
@@ -2775,9 +2682,11 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
         GibbonMove *move;
         gboolean reverse;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &who))
                 return -1;
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &points))
+        if (!gibbon_clip_reader_get_int (self->priv->clip_reader, &iter,
+                                         (gint *) &points))
                 return -1;
 
         if (0 == g_strcmp0 (who, self->priv->opponent)) {
@@ -2883,7 +2792,8 @@ gibbon_session_handle_error (GibbonSession *self, GSList *iter)
 {
         const gchar *msg;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &msg))
+        if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
+                                            &msg))
                                      return -1;
         gibbon_app_display_error (self->priv->app,
                                   _("Error message from server"),

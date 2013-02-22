@@ -433,9 +433,8 @@ static struct test_case test_error02 = {
 static struct test_case test_error03 = {
                 "** There is no one called anonymous.",
                 {
-                                { G_TYPE_INT64, "100" },
-                                { G_TYPE_INT64, "2" },
-                                { G_TYPE_STRING, "No such player: anonymous!"},
+                                { G_TYPE_INT64, "414" },
+                                { G_TYPE_STRING, "anonymous" },
                                 { G_TYPE_INVALID }
                 },
 };
@@ -1834,10 +1833,8 @@ static struct test_case test_address01 = {
 static struct test_case test_address02 = {
         "** 'http://foobar' is not an email address.",
         {
-                                { G_TYPE_INT64, "100" },
-                                { G_TYPE_INT64, "1" },
-                                { G_TYPE_STRING, "`http://foobar' is not"
-                                                 " an email address!"},
+                                { G_TYPE_INT64, "415" },
+                                { G_TYPE_STRING, "http://foobar"},
                                 { G_TYPE_INVALID }
         }
 };

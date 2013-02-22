@@ -32,7 +32,6 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include "gibbon-clip.h"
 #include "gibbon-clip-reader.h"
 #include "gibbon-clip-reader-priv.h"
 #include "gibbon-util.h"
@@ -720,6 +719,116 @@ gibbon_clip_reader_fixup_moves (GibbonCLIPReader *self)
                 if (to > from && to - from > 6)
                         return FALSE;
         }
+
+        return TRUE;
+}
+
+gboolean
+gibbon_clip_reader_get_string (const GibbonCLIPReader *self,
+                               GSList **iter, const gchar **string)
+{
+        GValue *value;
+
+        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
+        g_return_val_if_fail (iter != NULL, FALSE);
+        g_return_val_if_fail (*iter != NULL, FALSE);
+        g_return_val_if_fail (string != NULL, FALSE);
+
+        value = (*iter)->data;
+        g_return_val_if_fail (G_IS_VALUE (value), FALSE);
+        g_return_val_if_fail (G_VALUE_HOLDS_STRING (value), FALSE);
+
+        *string = g_value_get_string (value);
+
+        return TRUE;
+}
+
+gboolean
+gibbon_clip_reader_get_int (const GibbonCLIPReader *self,
+                            GSList **iter, gint *i)
+{
+        GValue *value;
+        gint64 i64;
+
+        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
+        g_return_val_if_fail (iter != NULL, FALSE);
+        g_return_val_if_fail (*iter != NULL, FALSE);
+        g_return_val_if_fail (i != NULL, FALSE);
+
+        value = (*iter)->data;
+        g_return_val_if_fail (G_IS_VALUE (value), FALSE);
+        g_return_val_if_fail (G_VALUE_HOLDS_INT64 (value), FALSE);
+
+        i64 = g_value_get_int64 (value);
+        g_return_val_if_fail (i64 <= G_MAXINT, FALSE);
+        g_return_val_if_fail (i64 >= G_MININT, FALSE);
+
+        *i = (gint) i64;
+
+        return TRUE;
+}
+
+gboolean
+gibbon_clip_reader_get_boolean (const GibbonCLIPReader *self,
+                            GSList **iter, gboolean *b)
+{
+        GValue *value;
+        gint64 i64;
+
+        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
+        g_return_val_if_fail (iter != NULL, FALSE);
+        g_return_val_if_fail (*iter != NULL, FALSE);
+        g_return_val_if_fail (b != NULL, FALSE);
+
+        value = (*iter)->data;
+        g_return_val_if_fail (G_IS_VALUE (value), FALSE);
+        g_return_val_if_fail (G_VALUE_HOLDS_INT64 (value), FALSE);
+
+        i64 = g_value_get_int64 (value);
+        g_return_val_if_fail (i64 >= 0, FALSE);
+        g_return_val_if_fail (i64 <= 1, FALSE);
+
+        *b = (gboolean) i64;
+
+        return TRUE;
+}
+
+gboolean
+gibbon_clip_reader_get_int64 (const GibbonCLIPReader *self,
+                              GSList **iter, gint64 *i64)
+{
+        GValue *value;
+
+        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
+        g_return_val_if_fail (iter != NULL, FALSE);
+        g_return_val_if_fail (*iter != NULL, FALSE);
+        g_return_val_if_fail (i64 != NULL, FALSE);
+
+        value = (*iter)->data;
+        g_return_val_if_fail (G_IS_VALUE (value), FALSE);
+        g_return_val_if_fail (G_VALUE_HOLDS_INT64 (value), FALSE);
+
+        *i64 = g_value_get_int64 (value);
+
+        return TRUE;
+}
+
+gboolean
+gibbon_clip_reader_get_double (const GibbonCLIPReader *self,
+                               GSList **iter, gdouble *d)
+{
+        GValue *value;
+
+        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
+        g_return_val_if_fail (iter != NULL, FALSE);
+        g_return_val_if_fail (*iter != NULL, FALSE);
+        g_return_val_if_fail (d != NULL, FALSE);
+
+        value = (*iter)->data;
+        g_return_val_if_fail (G_IS_VALUE (value), FALSE);
+        g_return_val_if_fail (G_VALUE_HOLDS_DOUBLE (value), FALSE);
+
+        *d = g_value_get_double (value);
 
         return TRUE;
 }

@@ -28,7 +28,7 @@
 #include "gibbon-session.h"
 #include "gibbon-server-console.h"
 #include "gibbon-fibs-command.h"
-#include "gibbon-clip.h"
+#include "gibbon-clip-reader.h"
 
 enum gibbon_connection_signals {
         CONNECTING,

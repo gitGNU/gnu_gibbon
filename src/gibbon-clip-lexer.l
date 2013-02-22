@@ -31,7 +31,6 @@
 
 #include "gibbon-clip-reader-priv.h"
 #include "gibbon-util.h"
-#include "gibbon-clip.h"
 
 #define reader gibbon_clip_lexer_get_extra(yyscanner)
 
@@ -278,14 +277,12 @@ FS		[ \t]*\.[ \t]*
 		return 1;
 	}
 <INITIAL>^\*\*{WS}There{WS}is{WS}no{OWS}one{WS}called{WS}{USER} {
-		char *user = 7 + strstr (yytext, "called");
-		while (*user == ' ' || *user == '\t')
-			++user;
-		
-		gibbon_clip_reader_set_error (reader,
-   	                                      GIBBON_CLIP_ERROR_NO_USER,
-		                              _("No such player: %s!"),
-		                              user);
+		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
+		                                    " \t",
+		                                    GIBBON_CLIP_NO_SUCH_USER,
+		                                    GIBBON_TT_USER, -1,
+		                                    GIBBON_TT_END))
+			return -1;
 
 		return 1;
 	}
@@ -1156,26 +1153,14 @@ FS		[ \t]*\.[ \t]*
 		return 1;		
 	}
 <INITIAL>^\*\*{WS}\x27{CHUNK}\x27{WS}is{WS}not{WS}an{WS}email{WS}address {
-		char *address = yytext + 3;
-		char *ptr;
+		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
+		                                    "' \t",
+		                                    GIBBON_CLIP_INVALID_ADDRESS,
+		                                    GIBBON_TT_WORD, 1,
+		                                    GIBBON_TT_END))
+			return -1;
 		
-		while (*address != '\'')
-			++address;
-		++address;
-		
-		ptr = address;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		--ptr;
-		*ptr = 0;
-		 
-		gibbon_clip_reader_set_error (reader,
-   	                                      GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS,
-		                              _("`%s' is not an email"
-		                                " address!"),
-		                              address);
-
-		return 1;
+		return 1;		
 	}
 <INITIAL>^\*\*{WS}ERROR:{WS}Saved{WS}match{WS}is{WS}corrupt\.{WS}Please{WS}start{WS}another{WS}one {
 		gibbon_clip_reader_set_error (reader,

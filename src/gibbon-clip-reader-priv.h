@@ -50,7 +50,6 @@ enum GibbonCLIPLexerTokenType {
 #include <glib.h>
 
 #include "gibbon-clip-reader.h"
-#include "gibbon-clip.h"
 
 G_BEGIN_DECLS
 
