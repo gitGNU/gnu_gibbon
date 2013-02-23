@@ -787,7 +787,7 @@ gibbon_clip_reader_get_boolean (const GibbonCLIPReader *self,
         g_return_val_if_fail (G_IS_VALUE (value), FALSE);
         g_return_val_if_fail (G_VALUE_HOLDS_BOOLEAN (value), FALSE);
 
-        *b = g_value_get_int64 (value);
+        *b = g_value_get_boolean (value);
 
         *iter = (*iter)->next;
 
