@@ -2354,8 +2354,7 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
                                                 count, info->data);
                         g_free (info->who);
                         g_free (info);
-                        gibbon_session_check_expect_queues (self, FALSE);
-                        return GIBBON_CLIP_SHOW_SAVED_COUNT;
+                        break;
                 }
                 iter2 = iter2->next;
         }
