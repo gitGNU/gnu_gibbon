@@ -2262,13 +2262,13 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                 if (self->priv->expect_notify)
                         check_queue = TRUE;
                 self->priv->expect_notify = !value;
-                if (check_queue)
+                if (check_queue || !value)
                         gibbon_session_check_expect_queues (self, TRUE);
         } else if (0 == g_strcmp0 ("autoboard", key)) {
                 if (self->priv->expect_autoboard)
                         check_queue = TRUE;
                 self->priv->expect_autoboard = !value;
-                if (check_queue)
+                if (check_queue || !value)
                         gibbon_session_check_expect_queues (self, TRUE);
         } else if (0 == g_strcmp0 ("ready", key)) {
                 self->priv->available = value;
