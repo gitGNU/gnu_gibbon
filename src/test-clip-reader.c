@@ -444,6 +444,7 @@ static struct test_case test_board00 =  {
                 ":4:0:0:0:-3:-2:-4:3:-2:0:0:0:0:-1:0:0:6:6:1:1:1:0:1:-1:0:25:0"
                 ":0:0:0:2:6:0:0",
                 {
+                                { G_TYPE_INT64, "200" },
                                 { G_TYPE_STRING, "\
 === Position ===\n\
 Opponent: black_jack, 0/7 points, 138 pips\n\
@@ -465,6 +466,7 @@ static struct test_case test_board01 =  {
                 ":-2:0:0:0:0:0:0:-3:-1:-3:-1:-4:0:1:0:0:6:2:1:1:1:0:-1:1:25:0"
                 ":0:5:0:0:2:4:0:0",
                 {
+                                { G_TYPE_INT64, "200" },
                                 { G_TYPE_STRING, "\
 === Position ===\n\
 Opponent: black_jack, 0/1 points, 18 pips\n\
@@ -486,6 +488,7 @@ static struct test_case test_board02 =  {
                 ":0:0:0:-1:-1:-2:-2:-2:-4:-2:0:0:1:5:1:0:0:2:0:1:0:1:-1:0:25:0"
                 ":0:0:0:2:0:1:0",
                 {
+                                { G_TYPE_INT64, "200" },
                                 { G_TYPE_STRING, "\
 === Position ===\n\
 Opponent: black_jack, 1/2 points, 83 pips\n\
@@ -510,6 +513,7 @@ static struct test_case test_board03 =  {
                 "0:0:-3:0:-5:1:0:0:0:1:0:1:0:0:0:0:1:1:1:0:-1:1:25:0:0:0:0:0:2:"
                 "0:0:0",
                 {
+                                { G_TYPE_INT64, "200" },
                                 { G_TYPE_STRING, "\
 === Position ===\n\
 Opponent: GibbonTestA, 1/2 points, 163 pips\n\
