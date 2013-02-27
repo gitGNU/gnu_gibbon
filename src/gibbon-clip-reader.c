@@ -549,6 +549,12 @@ gibbon_clip_reader_set_board (GibbonCLIPReader *self, gchar **tokens)
         g_value_init (value, GIBBON_TYPE_POSITION);
         g_value_set_boxed (value, pos);
 
+        value = g_malloc (sizeof *value);
+        *value = init;
+        self->priv->values = g_slist_prepend (self->priv->values, value);
+        g_value_init (value, G_TYPE_INT64);
+        g_value_set_int64 (value, GIBBON_CLIP_BOARD);
+
         return TRUE;
 
 bail_out_board:
