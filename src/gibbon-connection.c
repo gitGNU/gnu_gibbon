@@ -29,6 +29,7 @@
 #include "gibbon-server-console.h"
 #include "gibbon-fibs-command.h"
 #include "gibbon-clip-reader.h"
+#include "gibbon-util.h"
 
 enum gibbon_connection_signals {
         CONNECTING,
@@ -74,6 +75,9 @@ struct _GibbonConnectionPrivate {
         gboolean out_ready;
         
         GibbonSession *session;
+
+        gboolean debug_input;
+        gboolean debug_output;
 };
 
 #define GIBBON_CONNECTION_DEFAULT_PORT 4321
@@ -125,6 +129,9 @@ gibbon_connection_init (GibbonConnection *conn)
         conn->priv->out_ready = FALSE;
         
         conn->priv->session = NULL;
+
+        conn->priv->debug_input = FALSE;
+        conn->priv->debug_output = FALSE;
 }
 
 static void
@@ -287,6 +294,9 @@ gibbon_connection_new (GibbonApp *app, const gchar *hostname, guint16 port,
 
         self->priv->session = gibbon_session_new (app, self);
 
+        self->priv->debug_input = gibbon_debug ("connection-in");
+        self->priv->debug_output = gibbon_debug ("connection-out");
+
         return self;
 }
 
@@ -430,6 +440,8 @@ gibbon_connection_handle_input (GInputStream *input_stream,
                          */
                         console_output = g_alloca (1 + strlen (ptr));
                         strcpy (console_output, ptr);
+                        if (self->priv->debug_input)
+                                g_printerr ("<<< %s\n", ptr);
                         clip_code = gibbon_session_process_server_line (session,
                                                                         ptr);
                         if (clip_code >= 0) {
@@ -728,6 +740,9 @@ gibbon_connection_queue_command (GibbonConnection *self,
         va_start (args, format);
         formatted = g_strdup_vprintf (format, args);        
         va_end (args);
+
+        if (self->priv->debug_output)
+                g_printerr (">>> %s\n", formatted);
 
         line = g_strconcat (formatted, "\015\012", NULL);
         command = gibbon_fibs_command_new (line, is_manual);
