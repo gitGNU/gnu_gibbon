@@ -2790,8 +2790,12 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
 static gint
 gibbon_session_handle_error (GibbonSession *self, GSList *iter)
 {
+        gint64 subcode;
         const gchar *msg;
 
+        if (!gibbon_clip_reader_get_int64 (self->priv->clip_reader, &iter,
+                                            &subcode))
+                                     return -1;
         if (!gibbon_clip_reader_get_string (self->priv->clip_reader, &iter,
                                             &msg))
                                      return -1;
