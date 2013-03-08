@@ -1234,18 +1234,39 @@ static struct test_case test_between33 = {
 };
 
 static struct test_case test_between34 = {
-                "** You invited GibbonTestA to resume a saved match.",
+                "** You invited GibbonTestA to a 3 point match.",
                 {
-                                { G_TYPE_INT64, "314" },
+                                { G_TYPE_INT64, "313" },
                                 { G_TYPE_STRING, "GibbonTestA" },
+                                { G_TYPE_INT64, "3" },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_between35 = {
+                "** You invited GibbonTestA to an unlimited match.",
+                {
+                                { G_TYPE_INT64, "313" },
+                                { G_TYPE_STRING, "GibbonTestA" },
+                                { G_TYPE_INT64, "0" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_between36 = {
+                "** You invited GibbonTestA to resume a saved match.",
+                {
+                                { G_TYPE_INT64, "313" },
+                                { G_TYPE_STRING, "GibbonTestA" },
+                                { G_TYPE_INT64, "-1" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_between37 = {
                 "You win the 7 point match 8-4.",
                 {
-                                { G_TYPE_INT64, "315" },
+                                { G_TYPE_INT64, "314" },
                                 { G_TYPE_STRING, "You" },
                                 { G_TYPE_INT64, "7" },
                                 { G_TYPE_INT64, "8" },
@@ -1254,10 +1275,10 @@ static struct test_case test_between35 = {
                 }
 };
 
-static struct test_case test_between36 = {
+static struct test_case test_between38 = {
                 "GibbonTestA wins the 7 point match 8-4.",
                 {
-                                { G_TYPE_INT64, "315" },
+                                { G_TYPE_INT64, "314" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INT64, "7" },
                                 { G_TYPE_INT64, "8" },
@@ -1266,10 +1287,10 @@ static struct test_case test_between36 = {
                 }
 };
 
-static struct test_case test_between37 = {
+static struct test_case test_between39 = {
                 "You stop watching gflohr.",
                 {
-                                { G_TYPE_INT64, "316" },
+                                { G_TYPE_INT64, "315" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -1972,6 +1993,8 @@ static struct test_case *test_cases[] = {
                 &test_between35,
                 &test_between36,
                 &test_between37,
+                &test_between38,
+                &test_between39,
 
                 &test_resign00,
                 &test_resign01,

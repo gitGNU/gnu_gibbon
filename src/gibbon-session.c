@@ -661,9 +661,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 /* Ignore.  */
                 retval = GIBBON_CLIP_WAIT_JOIN_TOO;
                 break;
-        case GIBBON_CLIP_RESUME_CONFIRMATION:
+        case GIBBON_CLIP_INVITE_CONFIRMATION:
                 /* Ignore.  */
-                retval = GIBBON_CLIP_RESUME_CONFIRMATION;
+                retval = GIBBON_CLIP_INVITE_CONFIRMATION;
                 break;
         case GIBBON_CLIP_WIN_MATCH:
                 retval = gibbon_session_handle_win_match (self, iter);

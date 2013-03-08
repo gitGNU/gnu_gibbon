@@ -771,9 +771,11 @@ FS		[ \t]*\.[ \t]*
 		return 1;
 	}
 <INITIAL>^\*\*{WS}You{WS}invited{WS}{USER}{WS}to{WS}resume{WS}a{WS}saved{WS}match 	{
+		yytext[0] = '-';
+		yytext[1] = '1';
 		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
 		                                    " \t",
-		                                    GIBBON_CLIP_RESUME_CONFIRMATION,
+		                                    GIBBON_CLIP_INVITE_CONFIRMATION,
 		                                    GIBBON_TT_USER, 3,
 		                                    GIBBON_TT_END))
 			return -1;

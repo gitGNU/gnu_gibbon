@@ -108,9 +108,8 @@ enum GibbonClipCode {
                         GIBBON_CLIP_GAME_SCORE = 311,
                         GIBBON_CLIP_WAIT_JOIN_TOO = 312,
                         GIBBON_CLIP_INVITE_CONFIRMATION = 313,
-                        GIBBON_CLIP_RESUME_CONFIRMATION = 314,
-                        GIBBON_CLIP_WIN_MATCH = 315,
-                        GIBBON_CLIP_STOP_WATCHING = 316,
+                        GIBBON_CLIP_WIN_MATCH = 314,
+                        GIBBON_CLIP_STOP_WATCHING = 315,
 
                         /* Various.  */
                         GIBBON_CLIP_START_MATCH = 400,
