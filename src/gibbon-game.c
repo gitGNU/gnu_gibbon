@@ -589,7 +589,7 @@ gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
         pos->resigned = side == GIBBON_POSITION_SIDE_BLACK ?
-                        -resign->value : resign->value;
+                        -(guint64) resign->value : (guint64) resign->value;
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (resign), side, pos,
                                   timestamp);

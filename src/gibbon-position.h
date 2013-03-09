@@ -115,7 +115,7 @@ struct _GibbonPosition
 
         GibbonPositionSide turn;
 
-        guint64 resigned;
+        gint64 resigned;
         guint64 score;
 
         /*
