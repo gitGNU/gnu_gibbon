@@ -254,16 +254,16 @@ static void move_checker (GibbonPosition *position, gint board[28],
                           guint die, GibbonPositionSide side);
 static void find_any_move (const GibbonPosition *position, gint board[28],
                            GibbonPosition *post_position,
-                           GibbonPositionSide side, gint dice[5]);
+                           GibbonPositionSide side, guint dice[5]);
 static void find_good_move (const GibbonPosition *position, gint board[28],
                             GibbonPosition *post_position,
-                            GibbonPositionSide side, gint dice[5]);
-static void find_good_movement (gint board[28], gint dice[2],
+                            GibbonPositionSide side, guint dice[5]);
+static void find_good_movement (gint board[28], guint dice[2],
                                 GibbonPositionSide turn);
 static gboolean come_in_from_bar (gint board[28], gint die,
                                   GibbonPositionSide turn);
 
-static void print_moves (gint moves[8], GibbonPositionSide side, gint dice[2]);
+static void print_moves (gint moves[8], GibbonPositionSide side, guint dice[2]);
 
 #if (DEBUG_TEST_ENGINE)
 static void print_movement (gint board[28], gint from, gint die,
@@ -294,6 +294,7 @@ main (int argc, char *argv[])
         }
 
         if (argc > 2) {
+                errno = 0;
                 random_seed = g_ascii_strtoull (argv[2], NULL, 10);
                 if (errno) {
                         g_printerr ("Invalid random seed `%s': %s!\n",
@@ -318,13 +319,9 @@ test_game (void)
                         ? GIBBON_POSITION_SIDE_WHITE
                                         : GIBBON_POSITION_SIDE_BLACK;
         while (done_positions < total_positions) {
-                if (side == GIBBON_POSITION_SIDE_WHITE) {
-                        position->dice[0] = 1 + random () % 6;
-                        position->dice[1] = 1 + random () % 6;
-                } else {
-                        position->dice[0] = -6 + random () % 6;
-                        position->dice[1] = -6 + random () % 6;
-                }
+                position->dice[0] = 1 + random () % 6;
+                position->dice[1] = 1 + random () % 6;
+                position->turn = side;
 
                 if (gibbon_position_game_over (position)) {
 #if (DEBUG_TEST_ENGINE)
@@ -349,7 +346,7 @@ test_roll (GibbonPosition *position)
         GibbonPosition *post_position;
         guint i;
         GibbonPositionSide turn;
-        gint dice[5], die;
+        guint dice[5], die;
         gint board[28];
         gint post_board[28];
         gint moves[8];
@@ -364,7 +361,7 @@ test_roll (GibbonPosition *position)
 
         memset (dice, 0, sizeof dice);
         for (i = 0; i < max_movements; ++i)
-                dice[i] = abs (position->dice[i % 2]);
+                dice[i] = position->dice[i % 2];
 
         translate_position (board, position, turn);
 
@@ -418,7 +415,7 @@ test_roll (GibbonPosition *position)
 
                 move = gibbon_position_check_move (position, post_position,
                                                    turn);
-                legal = LegalMove (board, post_board, dice, moves);
+                legal = LegalMove (board, post_board, (int *) dice, moves);
                 compare_results (position, post_position, move,
                                  legal, moves, turn);
                 g_object_unref (move);
@@ -578,6 +575,7 @@ dump_position (const GibbonPosition *pos)
 {
         gint i;
 
+        /* FIXME! This gibbon_position_transform()! */
         g_printerr ("=== Position ===\n");
         g_printerr ("\
   +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n");
@@ -594,10 +592,10 @@ dump_position (const GibbonPosition *pos)
                 else
                         g_printerr ("%s", "   ");
         g_printerr (" |\n");
-        g_printerr (" v| dice: %+d : %+d     ",
+        g_printerr (" v| dice:  %u :  %u     ",
                     pos->dice[0], pos->dice[1]);
         g_printerr ("|BAR|                   | ");
-        g_printerr (" Cube: %d\n", pos->cube);
+        g_printerr (" Cube: %llu\n", (unsigned long long) pos->cube);
         g_printerr ("  |");
         for (i = 11; i >= 6; --i)
                 if (pos->points[i])
@@ -720,14 +718,14 @@ translate_board (GibbonPosition *position, gint board[28],
 }
 
 static void
-print_moves (gint moves[8], GibbonPositionSide turn, gint dice[2])
+print_moves (gint moves[8], GibbonPositionSide turn, guint dice[2])
 {
         gint i;
 
         if (turn == GIBBON_POSITION_SIDE_WHITE)
-                g_printerr ("W: %u%u", abs (dice[0]), abs (dice[1]));
+                g_printerr ("W: %u%u", dice[0], dice[1]);
         else
-                g_printerr ("B: %u%u", abs (dice[0]), abs (dice[1]));
+                g_printerr ("B: %u%u", dice[0], dice[1]);
 
         if (!*moves) {
                 g_printerr (" -\n");
@@ -743,7 +741,7 @@ print_moves (gint moves[8], GibbonPositionSide turn, gint dice[2])
 static void
 find_any_move (const GibbonPosition *position, gint board[28],
                GibbonPosition *post_position,
-               GibbonPositionSide turn, gint dice[5])
+               GibbonPositionSide turn, guint dice[5])
 {
         gboolean is_double = dice[0] == dice[1];
         guint max_movements = is_double ? 4 : 2;
@@ -796,11 +794,11 @@ find_any_move (const GibbonPosition *position, gint board[28],
 static void
 find_good_move (const GibbonPosition *position, gint _board[28],
                 GibbonPosition *post_position,
-                GibbonPositionSide turn, gint dice[5])
+                GibbonPositionSide turn, guint dice[5])
 {
         gint i = 0;
-        gint *dice_pair;
-        gint die;
+        guint *dice_pair;
+        guint die;
         gint brought_in = 0;
         gint bring_in_die = 0;
         gint board[28];
@@ -902,7 +900,7 @@ print_movement (gint board[28], gint from, gint die,
 #endif
 
 static void
-find_good_movement (gint board[28], gint dice[2],
+find_good_movement (gint board[28], guint dice[2],
                     GibbonPositionSide turn)
 {
         gint i;

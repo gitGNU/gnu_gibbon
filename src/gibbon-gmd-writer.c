@@ -293,8 +293,8 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
 
         if (pos->dice[0] || pos->dice[1]) {
                 buffer = g_strdup_printf (" Dice{%u %u}",
-                                          abs (pos->dice[0]),
-                                          abs (pos->dice[1]));
+                                          pos->dice[0],
+                                          pos->dice[1]);
                 GIBBON_WRITE_ALL (buffer);
         }
 
@@ -304,12 +304,14 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
          * blow up the Cube property, or rather a new may-double property.
          */
         if (pos->cube_turned) {
-                buffer = g_strdup_printf (" Cube{%u %d}",
-                                          pos->cube, pos->cube_turned);
+                buffer = g_strdup_printf (" Cube{%llu %d}",
+                                          (unsigned long long) pos->cube,
+                                          pos->cube_turned);
                 GIBBON_WRITE_ALL (buffer);
         } else if (pos->cube > 1) {
-                buffer = g_strdup_printf (" Cube{%u} Turn{%d}",
-                                          pos->cube, pos->turn);
+                buffer = g_strdup_printf (" Cube{%llu} Turn{%d}",
+                                          (unsigned long long) pos->cube,
+                                          pos->turn);
                 GIBBON_WRITE_ALL (buffer);
         } else {
                 buffer = g_strdup_printf (" Turn{%d}",

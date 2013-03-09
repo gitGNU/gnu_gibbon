@@ -923,23 +923,21 @@ gibbon_draw_cup (GibbonCairoboard *self, cairo_t *cr)
 static void
 gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr)
 {
-        gint *dice;
+        guint *dice;
         gint die_pos = 0;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
         dice = self->priv->pos->dice;
 
-        g_return_if_fail (dice[0] >= -6);
-        g_return_if_fail (dice[0] <= +6);
-        g_return_if_fail (dice[1] >= -6);
-        g_return_if_fail (dice[1] <= +6);
+        g_return_if_fail (dice[0] <= 6);
+        g_return_if_fail (dice[1] <= 6);
 
         if (dice[0])
                 gibbon_cairoboard_draw_die (self, cr, dice[0], die_pos);
 
         if (dice[1]) {
-                if (dice[0] * dice[1] > 0)
+                if (!self->priv->pos->turn)
                         die_pos = 1;
                 gibbon_cairoboard_draw_die (self, cr, dice[1], die_pos);
         }

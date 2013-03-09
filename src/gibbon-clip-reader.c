@@ -462,8 +462,8 @@ gibbon_clip_reader_set_board (GibbonCLIPReader *self, gchar **tokens)
                 pos->dice[1] = numbers[31];
         } else if (turn) {
                 pos->turn = GIBBON_POSITION_SIDE_BLACK;
-                pos->dice[0] = -numbers[32];
-                pos->dice[1] = -numbers[33];
+                pos->dice[0] = numbers[32];
+                pos->dice[1] = numbers[33];
         } else {
                 pos->turn = GIBBON_POSITION_SIDE_NONE;
         }

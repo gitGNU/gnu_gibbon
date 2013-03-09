@@ -491,9 +491,11 @@ gibbon_match_list_format_double (GibbonMatchList *self,
                                  const GibbonPosition *pos)
 {
         if (pos->cube > 1)
-                return g_strdup_printf (_("redoubles to %u"), pos->cube << 1);
+                return g_strdup_printf (_("redoubles to %llu"),
+                                        (unsigned long long) pos->cube << 1);
         else
-                return g_strdup_printf (_("doubles to %u"), pos->cube << 1);
+                return g_strdup_printf (_("doubles to %llu"),
+                                        (unsigned long long) pos->cube << 1);
 }
 
 static gchar *

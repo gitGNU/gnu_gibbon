@@ -464,7 +464,8 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
         }
 
         if (pos->cube > 1) {
-                buffer = g_strdup_printf ("%u", pos->cube);
+                buffer = g_strdup_printf ("%llu",
+                                          (unsigned long long) pos->cube);
                 simple_text = GSGF_VALUE (gsgf_simple_text_new (buffer));
                 g_free (buffer);
 

@@ -314,32 +314,16 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                                                " rolled!"));
                         return FALSE;
                 }
-        } else if ((pos->dice[0] || pos->dice[1])
-                    && (pos->dice[0] != -pos->dice[1])) {
-                gibbon_position_free (pos);
-                g_set_error_literal (error, GIBBON_ERROR,
-                                     GIBBON_MATCH_ERROR_ALREADY_ROLLED,
-                                     _("The dice have already been"
-                                       " rolled!"));
-                return FALSE;
         } else if (!side) {
-                if (abs (roll->die1) > abs (roll->die2))
+                if (roll->die1 > roll->die2)
                         side = GIBBON_POSITION_SIDE_WHITE;
                 else if (roll->die1 < roll->die2)
                         side = GIBBON_POSITION_SIDE_BLACK;
         }
 
         pos->turn = side;
-        if (pos->turn > 0) {
-                pos->dice[0] = +abs (roll->die1);
-                pos->dice[1] = +abs (roll->die2);
-        } else if (pos->turn < 0) {
-                pos->dice[0] = -abs (roll->die1);
-                pos->dice[1] = -abs (roll->die2);
-        } else {
-                pos->dice[0] = +abs (roll->die1);
-                pos->dice[1] = -abs (roll->die2);
-        }
+        pos->dice[0] = roll->die1;
+        pos->dice[1] = roll->die2;
 
         if (!self->priv->rolled) {
                 self->priv->rolled = TRUE;
@@ -698,11 +682,11 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
         pos->status = g_strdup_printf (
                         g_dngettext (GETTEXT_PACKAGE,
                                      "%s resigns and gives up one point.",
-                                     "%s resigns and gives up %d points.",
+                                     "%s resigns and gives up %llu points.",
                                      resign->value),
                       other == GIBBON_POSITION_SIDE_BLACK ?
                                       pos->players[0] : pos->players[1],
-                      pos->cube);
+                      (unsigned long long) pos->cube);
 
         if (side == GIBBON_POSITION_SIDE_BLACK) {
                 pos->scores[1] += resign->value;

@@ -742,8 +742,8 @@ test_try_swap_bug3 ()
         expect = gibbon_move_new (5, 3, 4);
 
         before->match_length = 1;
-        before->dice[0] = -5;
-        before->dice[1] = -3;
+        before->dice[0] = 5;
+        before->dice[1] = 3;
 
         memset (before->points, 0, sizeof before->points);
 
@@ -885,8 +885,8 @@ test_bear_off_bug1 ()
         expect = gibbon_move_new (1, 4, 4);
 
         before->match_length = 1;
-        before->dice[0] = -1;
-        before->dice[1] = -4;
+        before->dice[0] = 1;
+        before->dice[1] = 4;
 
         memset (before->points, 0, sizeof before->points);
 

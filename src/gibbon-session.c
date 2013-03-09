@@ -1883,7 +1883,6 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
         guint dice[2];
-        guint tmp;
         GibbonPosition *pos;
         GibbonCLIPReader *clip_reader = self->priv->clip_reader;
 
@@ -1928,18 +1927,7 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
                 return -1;
         }
 
-        /*
-         * Swap the dice if the lower one is left.
-         * FIXME! This should be configurable!
-         * FIXME! This should maybe be locale-dependent (rtl).
-         */
         pos = self->priv->position;
-        if ((pos->dice[0] > 0 && pos->dice[0] < pos->dice[1])
-            || (pos->dice[0] < 0 && pos->dice[0] > pos->dice[1])) {
-                tmp = pos->dice[0];
-                pos->dice[0] = pos->dice[1];
-                pos->dice[1] = tmp;
-        }
 
         gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app), pos);
@@ -1958,7 +1946,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
         gint i;
         GibbonPositionSide side;
         gchar *pretty_move;
-        gint *dice;
+        guint *dice;
         const gchar *player;
         guint num_moves;
         GibbonBoard *board;
@@ -2000,22 +1988,19 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
 
         if (0 == g_strcmp0 (self->priv->opponent, player)) {
                 self->priv->position->status =
-                                g_strdup_printf (_("%d%d: %s moves %s."),
-                                                 abs (dice[0]),
-                                                 abs (dice[1]),
+                                g_strdup_printf (_("%u%u: %s moves %s."),
+                                                 dice[0], dice[1],
                                                  self->priv->opponent,
                                                  pretty_move);
         } else if (0 == g_strcmp0 ("You", player)) {
                 self->priv->position->status =
-                                g_strdup_printf (_("%d%d: You move %s."),
-                                                 abs (dice[0]),
-                                                 abs (dice[1]),
+                                g_strdup_printf (_("%u%u: You move %s."),
+                                                 dice[0], dice[1],
                                                  pretty_move);
         } else if (0 == g_strcmp0 (self->priv->watching, player)) {
                 self->priv->position->status =
-                                g_strdup_printf (_("%d%d: %s moves %s."),
-                                                abs (dice[0]),
-                                                abs (dice[1]),
+                                g_strdup_printf (_("%u%u: %s moves %s."),
+                                                dice[0], dice[1],
                                                 self->priv->watching,
                                                 pretty_move);
         } else {

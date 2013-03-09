@@ -56,8 +56,8 @@ struct _GibbonRoll
 {
         GibbonGameAction parent_instance;
 
-        gint die1;
-        gint die2;
+        guint die1;
+        guint die2;
 };
 
 /**

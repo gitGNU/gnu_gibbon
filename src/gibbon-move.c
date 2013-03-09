@@ -63,7 +63,7 @@ gibbon_move_class_init (GibbonMoveClass *klass)
 }
 
 GibbonMove *
-gibbon_move_new (gint die1, gint die2, gsize num_movements)
+gibbon_move_new (guint die1, guint die2, gsize num_movements)
 {
         GibbonMove *self = g_object_new (GIBBON_TYPE_MOVE, NULL);
 
@@ -77,7 +77,7 @@ gibbon_move_new (gint die1, gint die2, gsize num_movements)
 }
 
 GibbonMove *
-gibbon_move_newv (gint die1, gint die2, ...)
+gibbon_move_newv (guint die1, guint die2, ...)
 {
         GibbonMove *self = gibbon_move_new (die1, die2, 4);
         GibbonMovement *movement;

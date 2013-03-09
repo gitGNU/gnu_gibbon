@@ -87,7 +87,6 @@ test_bug02 ()
         GibbonPosition *from;
         GibbonPosition *to;
         GSList *result = NULL;
-        GibbonRoll *roll;
 
         match = gibbon_match_new ("gnubg_grandmaster", "gnubg_advanced",
                                   11, TRUE);

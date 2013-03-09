@@ -105,7 +105,7 @@ struct _GibbonPosition
 
         guint bar[2];
 
-        gint dice[2];
+        guint dice[2];
 
         guint64 cube;
         gboolean may_double[2];
@@ -126,7 +126,7 @@ struct _GibbonPosition
 
         gchar *players[2];
 
-        gint unused_dice[4];
+        guint unused_dice[4];
 
         gchar *game_info;
         gchar *status;

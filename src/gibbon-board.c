@@ -338,7 +338,7 @@ gibbon_board_process_quick_bear_off (GibbonBoard *self)
                 return;
 
         if (pos->unused_dice[3]) {
-                die = abs (pos->unused_dice[3]);
+                die = pos->unused_dice[3];
                 if (pos->points[die - 1] < 4) {
                         gibbon_board_quick_bear_off_with_waste (self);
                         return;
@@ -346,7 +346,7 @@ gibbon_board_process_quick_bear_off (GibbonBoard *self)
                 new_pos = gibbon_position_copy (pos);
                 new_pos->points[die - 1] -= 4;
         } else if (pos->unused_dice[2]) {
-                die = abs (pos->unused_dice[2]);
+                die = pos->unused_dice[2];
                 if (pos->points[die - 1] < 3) {
                         gibbon_board_quick_bear_off_with_waste (self);
                         return;
@@ -354,22 +354,22 @@ gibbon_board_process_quick_bear_off (GibbonBoard *self)
                 new_pos = gibbon_position_copy (pos);
                 new_pos->points[die - 1] -= 3;
         } else if (pos->unused_dice[1]) {
-                die = abs (pos->unused_dice[1]);
+                die = pos->unused_dice[1];
                 if (pos->points[die - 1] < 1) {
                         gibbon_board_quick_bear_off_with_waste (self);
                         return;
                 }
-                die = abs (pos->unused_dice[0]);
+                die = pos->unused_dice[0];
                 if (pos->points[die - 1] < 1) {
                         gibbon_board_quick_bear_off_with_waste (self);
                         return;
                 }
                 new_pos = gibbon_position_copy (pos);
                 --new_pos->points[die - 1];
-                die = abs (pos->unused_dice[1]);
+                die = pos->unused_dice[1];
                 --new_pos->points[die - 1];
         } else if (pos->unused_dice[0]) {
-                die = abs (pos->unused_dice[0]);
+                die = pos->unused_dice[0];
                 if (pos->points[die - 1] < 3) {
                         gibbon_board_quick_bear_off_with_waste (self);
                         return;
@@ -405,17 +405,17 @@ gibbon_board_quick_bear_off_with_waste (GibbonBoard *self)
         pos = gibbon_board_get_position (self);
 
         if (pos->unused_dice[3]) {
-                die = abs (pos->unused_dice[3]);
+                die = pos->unused_dice[3];
                 num_checkers = 4;
         } else if (pos->unused_dice[2]) {
-                die = abs (pos->unused_dice[2]);
+                die = pos->unused_dice[2];
                 num_checkers = 3;
         } else if (pos->unused_dice[1]
                    && pos->unused_dice[0] == pos->unused_dice[1]) {
-                die = abs (pos->unused_dice[1]);
+                die = pos->unused_dice[1];
                 num_checkers = 2;
         } else if (pos->unused_dice[0] && !pos->unused_dice[1]) {
-                die = abs (pos->unused_dice[0]);
+                die = pos->unused_dice[0];
                 num_checkers = 1;
         } else {
                 /*
@@ -457,9 +457,6 @@ gibbon_board_quick_bear_off_with_waste2 (GibbonBoard *self)
 
         new_pos = gibbon_position_copy (pos);
 
-        new_pos->unused_dice[0] = abs (new_pos->unused_dice[0]);
-        new_pos->unused_dice[1] = abs (new_pos->unused_dice[1]);
-
         die = new_pos->unused_dice[1];
         if (new_pos->points[die - 1] > 0) {
                 new_pos->unused_dice[1] = 0;
@@ -492,7 +489,7 @@ gibbon_board_quick_bear_off_with_waste2 (GibbonBoard *self)
                 }
         }
 
-        die = abs (new_pos->unused_dice[0]);
+        die = new_pos->unused_dice[0];
         for (i = die - 2; i >= 0; --i) {
                 while (new_pos->points[i] > 0) {
                         --new_pos->points[i];

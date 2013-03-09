@@ -353,7 +353,8 @@ static gchar *
 gibbon_jelly_fish_writer_double (const GibbonJellyFishWriter *self,
                                   const GibbonPosition *position)
 {
-        return g_strdup_printf ("  Doubles => %u", position->cube << 1);
+        return g_strdup_printf ("  Doubles => %llu",
+                                (unsigned long long) position->cube << 1);
 }
 
 static gchar *

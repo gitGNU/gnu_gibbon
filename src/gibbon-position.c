@@ -284,9 +284,9 @@ gibbon_position_get_borne_off (const GibbonPosition *self,
         }
 
         if (side < 0)
-                checkers -= abs (self->bar [1]);
+                checkers -= self->bar[1];
         else if (side > 0)
-                checkers -= abs (self->bar [0]);
+                checkers -= self->bar[0];
 
         if (checkers < 0)
                 checkers = 0;
@@ -309,13 +309,13 @@ gibbon_position_get_pip_count (const GibbonPosition *self,
                         if (self->points[i] < 0)
                                 pips -= (24 - i) * self->points[i];
                 }
-                pips += 25 * abs (self->bar[1]);
+                pips += 25 * self->bar[1];
         } else {
                 for (i = 0; i < 24; ++i) {
                         if (self->points[i] > 0)
                                 pips += (i + 1) * self->points[i];
                 }
-                pips += 25 * abs (self->bar[0]);
+                pips += 25 * self->bar[0];
         }
 
         return pips;
@@ -336,8 +336,8 @@ gibbon_position_check_move (const GibbonPosition *_before,
         guint die1, die2, this_die, other_die;
         GList *iter;
 
-        die1 = abs (_before->dice[0]);
-        die2 = abs (_before->dice[1]);
+        die1 = _before->dice[0];
+        die2 = _before->dice[1];
         move = gibbon_move_new (die1, die2, 0);
         move->status = GIBBON_MOVE_ILLEGAL;
 
@@ -1410,12 +1410,11 @@ gibbon_position_reset_unused_dice (GibbonPosition *self)
 
         self->unused_dice[0] = self->unused_dice[2] = 0;
 
-        self->unused_dice[0] = abs (self->dice[0]);
-        self->unused_dice[1] = abs (self->dice[1]);
-        if (abs (self->dice[0]) == abs (self->dice[1]))
-                self->unused_dice[2]
-                                  = self->unused_dice[3]
-                                  = self->unused_dice[0];
+        self->unused_dice[0] = self->dice[0];
+        self->unused_dice[1] = self->dice[1];
+        if (self->dice[0] == self->dice[1])
+                self->unused_dice[2] = self->unused_dice[3]
+                                     = self->unused_dice[0];
 }
 
 void
@@ -1447,10 +1446,20 @@ gibbon_position_transform_to_string_value (const GValue *position_value,
                         g_string_append_printf (s, "%s", "   ");
         g_string_append_printf (s, " | May double: %s\n",
                                 self->may_double[1] ? "yes" : "no");
-        g_string_append_printf (s, " v| dice: %+d : %+d     ",
-                                self->dice[0], self->dice[1]);
+        if (!self->dice[0] && !self->dice[1])
+                g_string_append_printf (s, " v| dice: +0 : +0     ");
+        else if (self->turn > 0)
+                g_string_append_printf (s, " v| dice: +%u : +%u     ",
+                                        self->dice[0], self->dice[1]);
+        else if (self->turn < 0)
+                g_string_append_printf (s, " v| dice: -%u : -%u     ",
+                                        self->dice[0], self->dice[1]);
+        else
+                g_string_append_printf (s, " v| dice: +%u : -%u     ",
+                                        self->dice[0], self->dice[1]);
         g_string_append (s, "|BAR|                   | ");
-        g_string_append_printf (s, " Cube: %d\n", self->cube);
+        g_string_append_printf (s, " Cube: %llu\n",
+                                (unsigned long long) self->cube);
         g_string_append (s, "  |");
         for (i = 11; i >= 6; --i)
                 if (self->points[i])

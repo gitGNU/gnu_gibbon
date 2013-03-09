@@ -667,7 +667,8 @@ _gibbon_gmd_reader_setup_position (GibbonGMDReader *self, gint64 b1,
 }
 
 gboolean
-_gibbon_gmd_reader_setup_dice (GibbonGMDReader *self, gint64 die1, gint64 die2)
+_gibbon_gmd_reader_setup_dice (GibbonGMDReader *self,
+                               guint64 die1, guint64 die2)
 {
         GibbonPosition *pos;
         GibbonGame *game;
@@ -675,16 +676,14 @@ _gibbon_gmd_reader_setup_dice (GibbonGMDReader *self, gint64 die1, gint64 die2)
         g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
         g_return_val_if_fail (die1 != 0, FALSE);
         g_return_val_if_fail (die2 != 0, FALSE);
-        g_return_val_if_fail (die1 >= -6, FALSE);
-        g_return_val_if_fail (die2 >= -6, FALSE);
         g_return_val_if_fail (die1 <= 6, FALSE);
         g_return_val_if_fail (die2 <= 6, FALSE);
 
         game = gibbon_match_get_current_game (self->priv->match);
         pos = gibbon_game_get_initial_position_editable (game);
 
-        pos->dice[0] = abs (die1);
-        pos->dice[1] = abs (die2);
+        pos->dice[0] = die1;
+        pos->dice[1] = die2;
 
         return TRUE;
 }
