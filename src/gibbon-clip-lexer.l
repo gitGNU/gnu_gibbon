@@ -771,11 +771,32 @@ FS		[ \t]*\.[ \t]*
 		return 1;
 	}
 <INITIAL>^\*\*{WS}You{WS}invited{WS}{USER}{WS}to{WS}resume{WS}a{WS}saved{WS}match 	{
-		yytext[0] = '-';
-		yytext[1] = '1';
-		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
+		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
 		                                    " \t",
 		                                    GIBBON_CLIP_INVITE_CONFIRMATION,
+		                                    GIBBON_TT_MATCH_LENGTH, 5,
+		                                    GIBBON_TT_USER, 3,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^\*\*{WS}You{WS}invited{WS}{USER}{WS}to{WS}a{WS}{NUMBER}{WS}point{WS}match 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
+		                                    " \t",
+		                                    GIBBON_CLIP_INVITE_CONFIRMATION,
+		                                    GIBBON_TT_MATCH_LENGTH, 6,
+		                                    GIBBON_TT_USER, 3,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^\*\*{WS}You{WS}invited{WS}{USER}{WS}to{WS}an?{WS}unlimited{WS}match 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
+		                                    " \t",
+		                                    GIBBON_CLIP_INVITE_CONFIRMATION,
+		                                    GIBBON_TT_MATCH_LENGTH, 6,
 		                                    GIBBON_TT_USER, 3,
 		                                    GIBBON_TT_END))
 			return -1;
