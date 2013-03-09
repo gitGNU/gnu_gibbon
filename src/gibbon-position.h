@@ -100,7 +100,7 @@ typedef enum {
 typedef struct _GibbonPosition GibbonPosition;
 struct _GibbonPosition
 {
-        guint match_length;
+        guint64 match_length;
         gint points[24];
 
         guint bar[2];
@@ -111,12 +111,12 @@ struct _GibbonPosition
         gboolean may_double[2];
         GibbonPositionSide cube_turned;
 
-        guint scores[2];
+        guint64 scores[2];
 
         GibbonPositionSide turn;
 
-        gint resigned;
-        gint score;
+        guint64 resigned;
+        guint64 score;
 
         /*
          * All properties above this comment are considered `significant'.

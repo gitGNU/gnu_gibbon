@@ -337,14 +337,14 @@ check_match (const GibbonMatch *match)
         }
 
         if (1 != pos->scores[0]) {
-                g_printerr ("Expected white score of %u, got %u!\n",
-                            1, pos->scores[0]);
+                g_printerr ("Expected white score of %u, got %llu!\n",
+                            1, (unsigned long long) pos->scores[0]);
                 retval = FALSE;
         }
 
         if (8 != pos->scores[1]) {
-                g_printerr ("Expected black score of %u, got %u!\n",
-                            8, pos->scores[1]);
+                g_printerr ("Expected black score of %u, got %llu!\n",
+                            8, (unsigned long long) pos->scores[1]);
                 retval = FALSE;
         }
 

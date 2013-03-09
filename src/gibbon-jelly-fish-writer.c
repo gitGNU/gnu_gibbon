@@ -168,9 +168,9 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
         gchar last_char = 0;
         gint score;
 
-        buffer = g_strdup_printf (" %s : %u",
+        buffer = g_strdup_printf (" %s : %llu",
                                   position->players[1],
-                                  position->scores[1]);
+                                  (unsigned long long) position->scores[1]);
 
         if (!g_output_stream_write_all (out,
                                         buffer, strlen (buffer),
@@ -189,10 +189,10 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                 padding[i] = 0;
         }
 
-        buffer = g_strdup_printf ("%s %s : %u",
+        buffer = g_strdup_printf ("%s %s : %llu",
                                   padding,
                                   position->players[0],
-                                  position->scores[0]);
+                                  (unsigned long long) position->scores[0]);
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                         NULL, NULL, error)) {

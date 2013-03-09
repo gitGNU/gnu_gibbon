@@ -49,7 +49,7 @@ struct _GibbonMatchPrivate {
         gchar *wrank;
         gchar *brank;
         gboolean crawford;
-        gsize length;
+        guint64 length;
         gchar *location;
 
         gboolean debug;

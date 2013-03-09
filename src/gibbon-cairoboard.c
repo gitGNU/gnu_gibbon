@@ -1299,7 +1299,7 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
         guint num_players = 0;
         gboolean running;
         GibbonPosition *pos = self->priv->pos;
-        guint away[2];
+        guint64 away[2];
         guint pip_count[2];
 
         text = pos->players[0] ? pos->players[0] : "";
@@ -1326,7 +1326,8 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
 
         if (running) {
                 if (pos->match_length) {
-                        text = g_strdup_printf (_("%u-point match"),
+                        text = g_strdup_printf (_("%llu-point match"),
+                                                  (unsigned long long)
                                                   pos->match_length);
                 } else {
                         text = g_strdup (_("Unlimited match"));
@@ -1347,23 +1348,27 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
             && pos->scores[0] < pos->match_length
             && pos->scores[1] < pos->match_length) {
                 away[0] = pos->match_length - pos->scores[0];
-                text = g_strdup_printf (_("Score: %u (%u-away)"),
-                                        pos->scores[0], away[0]);
+                text = g_strdup_printf (_("Score: %llu (%llu-away)"),
+                                        (unsigned long long) pos->scores[0],
+                                        (unsigned long long) away[0]);
                 svg_util_steal_text_params (self->priv->board, "score1", text,
                                             1.0, 0, NULL);
                 g_free (text);
                 away[1] = pos->match_length - pos->scores[1];
-                text = g_strdup_printf (_("Score: %u (%u-away)"),
-                                        pos->scores[1], away[1]);
+                text = g_strdup_printf (_("Score: %llu (%llu-away)"),
+                                        (unsigned long long) pos->scores[1],
+                                        (unsigned long long) away[1]);
                 svg_util_steal_text_params (self->priv->board, "score2", text,
                                             1.0, 0, NULL);
                 g_free (text);
         } else {
-                text = g_strdup_printf (_("Score: %u"), pos->scores[0]);
+                text = g_strdup_printf (_("Score: %llu"),
+                                        (unsigned long long) pos->scores[0]);
                 svg_util_steal_text_params (self->priv->board, "score1", text,
                                             1.0, 0, NULL);
                 g_free (text);
-                text = g_strdup_printf (_("Score: %u"), pos->scores[1]);
+                text = g_strdup_printf (_("Score: %llu"),
+                                        (unsigned long long) pos->scores[1]);
                 svg_util_steal_text_params (self->priv->board, "score2", text,
                                             1.0, 0, NULL);
                 g_free (text);

@@ -539,9 +539,10 @@ gibbon_match_list_add_game (GibbonMatchList *self, const GibbonGame *game)
         gtk_list_store_append (self->priv->games, &iter);
         gameno = gtk_tree_model_iter_n_children (
                         GTK_TREE_MODEL (self->priv->games), NULL);
-        text = g_strdup_printf (_("Game %d: %u-%u %s"),
+        text = g_strdup_printf (_("Game %d: %llu-%llu %s"),
                                 gameno,
-                                pos->scores[1], pos->scores[0],
+                                (unsigned long long) pos->scores[1],
+                                (unsigned long long) pos->scores[0],
                                 comment);
         gtk_list_store_set (self->priv->games, &iter,
                             0, text, -1);

@@ -44,7 +44,7 @@ struct _GibbonGamePrivate {
         gsize num_snapshots;
         GibbonGameSnapshot *snapshots;
 
-        gint score;
+        gint64 score;
         gboolean resigned;
 
         gboolean is_crawford;

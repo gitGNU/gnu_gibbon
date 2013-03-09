@@ -261,8 +261,9 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
         GIBBON_WRITE_ALL (buffer);
 
         if (pos->scores[0] || pos->scores[1]) {
-                buffer = g_strdup_printf (" Scores{%u %u}",
-                                          pos->scores[0], pos->scores[1]);
+                buffer = g_strdup_printf (" Scores{%llu %llu}",
+                                          (unsigned long long) pos->scores[0],
+                                          (unsigned long long) pos->scores[1]);
                 GIBBON_WRITE_ALL (buffer);
         }
 

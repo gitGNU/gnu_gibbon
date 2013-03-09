@@ -1426,8 +1426,10 @@ gibbon_position_transform_to_string_value (const GValue *position_value,
         GString *s = g_string_new ("=== Position ===\n");
         gint i;
 
-        g_string_append_printf (s, "Opponent: %s, %d/%d points, %u pips\n",
-                                self->players[1], self->scores[1], self->match_length,
+        g_string_append_printf (s, "Opponent: %s, %llu/%llu points, %u pips\n",
+                                self->players[1],
+                                (unsigned long long) self->scores[1],
+                                (unsigned long long) self->match_length,
                                 gibbon_position_get_pip_count (self,
                                                    GIBBON_POSITION_SIDE_BLACK));
         g_string_append (s, "\
@@ -1476,16 +1478,19 @@ gibbon_position_transform_to_string_value (const GValue *position_value,
                                 self->may_double[0] ? "yes" : "no");
         g_string_append (s, "\
   +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n");
-        g_string_append_printf (s, "Player: %s, %d/%d points, %u pips\n",
-                    self->players[0], self->scores[0], self->match_length,
+        g_string_append_printf (s, "Player: %s, %llu/%llu points, %u pips\n",
+                    self->players[0],
+                    (unsigned long long) self->scores[0],
+                    (unsigned long long) self->match_length,
                     gibbon_position_get_pip_count (self,
                                                    GIBBON_POSITION_SIDE_WHITE));
         g_string_append_printf (s, "Game info: %s\n", self->game_info);
         g_string_append_printf (s, "Status: %s\n", self->status);
         g_string_append_printf (s, "Turn: %d, cube turned: %d,"
-                                   " resigned: %d, score: %d\n",
-                                self->turn, self->cube_turned, self->resigned,
-                                self->score);
+                                   " resigned: %llu, score: %llu\n",
+                                self->turn, self->cube_turned,
+                                (unsigned long long) self->resigned,
+                                (unsigned long long) self->score);
 
         g_value_set_static_string (string_value, g_string_free (s, FALSE));
 }
