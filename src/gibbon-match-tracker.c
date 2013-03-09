@@ -296,7 +296,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
 
         if (!gibbon_match_get_missing_actions (match, target, &actions)) {
                 /*
-                 * This case is not necessarily in error.  It also happens,
+                 * This case is not necessarily an error.  It also happens,
                  * if we have a saved match for the two opponents that
                  * has expired on the server.
                  *
