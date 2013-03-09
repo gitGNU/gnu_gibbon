@@ -159,3 +159,4 @@
 - The motto of the day should be displayed in a dialog box with a checkbox
   "Do not display this again".  If the user selects to not display the motto
   of the day, it should be displayed in the server console instead.
+- Do not use negative numbers for black's dice!
