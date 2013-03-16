@@ -468,7 +468,6 @@ gibbon_clip_reader_set_board (GibbonCLIPReader *self, gchar **tokens)
                 pos->turn = GIBBON_POSITION_SIDE_NONE;
         }
 
-
         if (numbers[34] < 0
             || (numbers[34] & (~numbers[34] + 1)) != numbers[34])
                 goto bail_out_board;
@@ -478,8 +477,8 @@ gibbon_clip_reader_set_board (GibbonCLIPReader *self, gchar **tokens)
          * May double flags.  These may have to be corrected later.
          */
         if (numbers[35] != 0 && numbers[35] != 1)
-        pos->may_double[0] = numbers[35];
                 goto bail_out_board;
+        pos->may_double[0] = numbers[35];
         if (numbers[36] != 0 && numbers[36] != 1)
                 goto bail_out_board;
         pos->may_double[1] = numbers[36];
