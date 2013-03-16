@@ -568,7 +568,7 @@ FS		[ \t]*\.[ \t]*
 		while (*ptr == ' ' || *ptr == '\t')
 			++ptr;
 		user = ptr;
-		while (*ptr != ' ' && *ptr != '\t')
+		while (*ptr && *ptr != ' ' && *ptr != '\t')
 			++ptr;
 		*ptr = 0;
 		
@@ -594,7 +594,7 @@ FS		[ \t]*\.[ \t]*
 		while (*ptr == ' ' || *ptr == '\t')
 			++ptr;
 		user = ptr;
-		while (*ptr != ' ' && *ptr != '\t')
+		while (*ptr && *ptr != ' ' && *ptr != '\t')
 			++ptr;
 		*ptr = 0;
 		
@@ -621,7 +621,7 @@ FS		[ \t]*\.[ \t]*
 		while (*ptr == ' ' || *ptr == '\t')
 			++ptr;
 		user = ptr;
-		while (*ptr != ' ' && *ptr != '\t')
+		while (*ptr && *ptr != ' ' && *ptr != '\t')
 			++ptr;
 		*ptr = 0;
 		
@@ -648,7 +648,7 @@ FS		[ \t]*\.[ \t]*
 		while (*ptr == ' ' || *ptr == '\t')
 			++ptr;
 		user = ptr;
-		while (*ptr != ' ' && *ptr != '\t')
+		while (*ptr && *ptr != ' ' && *ptr != '\t')
 			++ptr;
 		*ptr = 0;
 		
@@ -1135,7 +1135,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^{USER}{WS}has{WS}no{WS}saved{WS}games {
 		char *ptr = yytext;
-		while (*ptr != ' ' && *ptr != '\t')
+		while (*ptr && *ptr != ' ' && *ptr != '\t')
 			++ptr;
 		*ptr++ = ' ';
 		*ptr++ = '0';

@@ -457,6 +457,7 @@ Player: joe_white, 5/7 points, 156 pips\n\
 Game info: (null)\n\
 Status: (null)\n\
 Turn: -1, cube turned: 0, resigned: 0, score: 0\n"},
+                                { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -479,6 +480,7 @@ Player: joe_white, 0/1 points, 73 pips\n\
 Game info: (null)\n\
 Status: (null)\n\
 Turn: -1, cube turned: 0, resigned: 0, score: 0\n"},
+                                { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -501,6 +503,7 @@ Player: joe_white, 1/2 points, 111 pips\n\
 Game info: Post-Crawford game\n\
 Status: (null)\n\
 Turn: 1, cube turned: 0, resigned: 0, score: 0\n"},
+                               { G_TYPE_BOOLEAN, "TRUE" },
                                { G_TYPE_INVALID }
                 }
 };
@@ -526,6 +529,7 @@ Player: You, 0/2 points, 161 pips\n\
 Game info: Crawford game\n\
 Status: (null)\n\
 Turn: -1, cube turned: 0, resigned: 0, score: 0\n"},
+                               { G_TYPE_BOOLEAN, "FALSE" },
                                { G_TYPE_INVALID }
                 }
 };

@@ -478,8 +478,8 @@ gibbon_clip_reader_set_board (GibbonCLIPReader *self, gchar **tokens)
          * May double flags.  These may have to be corrected later.
          */
         if (numbers[35] != 0 && numbers[35] != 1)
-                goto bail_out_board;
         pos->may_double[0] = numbers[35];
+                goto bail_out_board;
         if (numbers[36] != 0 && numbers[36] != 1)
                 goto bail_out_board;
         pos->may_double[1] = numbers[36];
@@ -546,6 +546,12 @@ gibbon_clip_reader_set_board (GibbonCLIPReader *self, gchar **tokens)
         value = g_malloc (sizeof *value);
         *value = init;
         self->priv->values = g_slist_prepend (NULL, value);
+        g_value_init (value, G_TYPE_BOOLEAN);
+        g_value_set_boolean (value, direction == -1);
+
+        value = g_malloc (sizeof *value);
+        *value = init;
+        self->priv->values = g_slist_prepend (self->priv->values, value);
         g_value_init (value, GIBBON_TYPE_POSITION);
         g_value_set_boxed (value, pos);
 

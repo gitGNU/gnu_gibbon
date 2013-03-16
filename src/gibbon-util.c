@@ -172,6 +172,7 @@ gibbon_strsplit_set (const gchar *string, const gchar *set, gint max_tokens)
                 while (*ptr && !lookup[(guchar) *ptr])
                         ++ptr;
                 list = g_slist_prepend (list, g_strndup (start, ptr - start));
+
                 ++num_tokens;
         }
 
