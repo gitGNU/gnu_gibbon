@@ -1537,6 +1537,8 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         const GibbonPosition *current;
 
         pos = gibbon_position_copy (g_value_get_boxed (iter->data));
+        iter = iter->next;
+        self->priv->direction = g_value_get_boolean (iter->data);
 
         if (!g_strcmp0 ("You", pos->players[0])) {
                 connection = gibbon_app_get_connection (self->priv->app);
