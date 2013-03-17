@@ -149,7 +149,7 @@ static void gibbon_cairoboard_draw_flat_checker (GibbonCairoboard *board, cairo_
                                                  gdouble x, gdouble y,
                                                  gint side);
 static void gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
-                                        gint value, guint die_pos);
+                                        guint value, guint die_pos);
 
 static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_flag (GibbonCairoboard *board, cairo_t *cr);
@@ -924,7 +924,6 @@ static void
 gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr)
 {
         guint *dice;
-        gint die_pos = 0;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
@@ -933,21 +932,18 @@ gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr)
         g_return_if_fail (dice[0] <= 6);
         g_return_if_fail (dice[1] <= 6);
 
+        g_printerr ("Turn: %d, dice: %u%u\n", self->priv->pos->turn, dice[0], dice[1]);
         if (dice[0])
-                gibbon_cairoboard_draw_die (self, cr, dice[0], die_pos);
+                gibbon_cairoboard_draw_die (self, cr, dice[0], 0);
 
-        if (dice[1]) {
-                if (!self->priv->pos->turn)
-                        die_pos = 1;
-                gibbon_cairoboard_draw_die (self, cr, dice[1], die_pos);
-        }
+        if (dice[1])
+                gibbon_cairoboard_draw_die (self, cr, dice[1], 1);
 }
 
 static void
 gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
-                            gint value, guint die_pos)
+                            guint value, guint die_pos)
 {
-        GibbonPositionSide side;
         gdouble x, y;
         struct svg_component *die;
         gdouble top, bottom;
@@ -956,30 +952,27 @@ gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
         g_return_if_fail (value != 0);
-        g_return_if_fail (value >= -6);
-        g_return_if_fail (value <= +6);
+        g_return_if_fail (value <= 6);
 
         top = self->priv->point24->y;
         bottom = self->priv->point12->y + self->priv->point12->height;
 
-        if (value < 0)
-                side = GIBBON_POSITION_SIDE_BLACK;
-        else if (value > 0)
-                side = GIBBON_POSITION_SIDE_WHITE;
-        else
-                return;
-        
-        /* Normalize value.  */
-        value *= side;
-
-        if (side == GIBBON_POSITION_SIDE_BLACK) {
+        if (self->priv->pos->turn < 0) {
                 die = self->priv->black_dice[value - 1];
                 left = self->priv->point12->x;
                 right = left + 6 * self->priv->point12->width;
-        } else {
+        } else if (self->priv->pos->turn > 0) {
                 die = self->priv->white_dice[value - 1];
                 right = self->priv->point24->x + self->priv->point24->width;
                 left = right - 6 * self->priv->point24->width;
+        } else if (!die_pos) {
+                die = self->priv->white_dice[value - 1];
+                right = self->priv->point24->x + self->priv->point24->width;
+                left = right - 6 * self->priv->point24->width;
+        } else {
+                die = self->priv->black_dice[value - 1];
+                left = self->priv->point12->x;
+                right = left + 6 * self->priv->point12->width;
         }
 
         x = 0.5 * (left + right) + (die_pos - 0.5) * 1.5 * die->width;
