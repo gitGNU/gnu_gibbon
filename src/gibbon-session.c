@@ -1884,16 +1884,16 @@ static gboolean
 gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
-        guint dice[2];
+        gint64 dice[2];
         GibbonPosition *pos;
         GibbonCLIPReader *clip_reader = self->priv->clip_reader;
 
         if (!gibbon_clip_reader_get_string (clip_reader, &iter, &who))
                 return -1;
 
-        if (!gibbon_clip_reader_get_int (clip_reader, &iter, (gint *) &dice[0]))
+        if (!gibbon_clip_reader_get_int64 (clip_reader, &iter, &dice[0]))
                 return -1;
-        if (!gibbon_clip_reader_get_int (clip_reader, &iter, (gint *) &dice[1]))
+        if (!gibbon_clip_reader_get_int64 (clip_reader, &iter, &dice[1]))
                 return -1;
 
         if (0 == g_strcmp0 ("You", who)) {
@@ -1904,19 +1904,20 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
                 g_free (self->priv->position->status);
                 self->priv->position->status =
                         g_strdup_printf (_("You roll %u and %u."),
-                                         dice[0], dice[1]);
+                                         (guint) dice[0], (guint) dice[1]);
                 if (dice[0] == dice[1])
                         self->priv->position->unused_dice[2]
                         = self->priv->position->unused_dice[3]
                         = dice[0];
         } else if (0 == g_strcmp0 (self->priv->opponent, who)) {
-                self->priv->position->dice[0] = -dice[0];
-                self->priv->position->dice[1] = -dice[1];
+                self->priv->position->dice[0] = dice[0];
+                self->priv->position->dice[1] = dice[1];
                 g_free (self->priv->position->status);
                 self->priv->position->status =
                                 g_strdup_printf (_("%s rolls %u and %u."),
                                                  self->priv->opponent,
-                                                 dice[0], dice[1]);
+                                                 (guint) dice[0],
+                                                 (guint) dice[1]);
         } else if (0 == g_strcmp0 (self->priv->watching, who)) {
                 self->priv->position->dice[0] = dice[0];
                 self->priv->position->dice[1] = dice[1];
@@ -1924,7 +1925,7 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
                 self->priv->position->status =
                         g_strdup_printf (_("%s rolls %u and %u."),
                                          self->priv->watching,
-                                         dice[0], dice[1]);
+                                         (guint) dice[0], (guint) dice[1]);
         } else {
                 return -1;
         }
