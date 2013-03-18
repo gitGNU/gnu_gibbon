@@ -28,7 +28,7 @@
 #include <glib-object.h>
 #include <gio/gio.h>
 
-#define GIBBON_SCHEMA "bg.Gibbon"
+#define GIBBON_SCHEMA "bg.gibbon"
 
 #define GIBBON_PREFS_SCHEMA GIBBON_SCHEMA ".preferences"
 
