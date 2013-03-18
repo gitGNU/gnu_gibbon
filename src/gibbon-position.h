@@ -81,6 +81,7 @@ typedef enum {
  *         stored here.
  * @game_info: Free-form string describing the game ("Crawford", ...).
  * @status: Free-form string describing the status ("It's your move", ...).
+ * @dice_swapped: %TRUE% if the dice should be swapped.
  *
  * A boxed type representing a backgammon position.
  *
@@ -130,6 +131,11 @@ struct _GibbonPosition
 
         gchar *game_info;
         gchar *status;
+
+        /*
+         * Should the dice be displayed in opposite order?
+         */
+        gboolean dice_swapped;
 };
 
 GType gibbon_position_get_type (void) G_GNUC_CONST;

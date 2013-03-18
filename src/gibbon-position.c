@@ -94,7 +94,9 @@ static GibbonPosition initial = {
                 /* game_info */
                 NULL,
                 /* status */
-                NULL
+                NULL,
+                /* dice_swapped */
+                FALSE
 };
 
 /* Move patterns describe how a double roll was used, when we know the set
