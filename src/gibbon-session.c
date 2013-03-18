@@ -168,6 +168,8 @@ static void gibbon_session_clean_saved (const GibbonSession *self);
 static void gibbon_session_update_tracker (GibbonSession *self);
 static void gibbon_session_check_address (GibbonSession *self,
                                           const gchar *remote_address);
+static void gibbon_session_auto_swap_dice (const GibbonSession *self,
+                                           GibbonPosition *pos);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -1887,8 +1889,6 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         gint64 dice[2];
         GibbonPosition *pos;
         GibbonCLIPReader *clip_reader = self->priv->clip_reader;
-        GSettings *settings;
-        gboolean auto_swap;
 
         if (!gibbon_clip_reader_get_string (clip_reader, &iter, &who))
                 return -1;
@@ -1932,15 +1932,7 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
                 return -1;
         }
 
-        if (self->priv->position->dice[0] < self->priv->position->dice[1]) {
-                settings = g_settings_new (GIBBON_PREFS_MATCH_SCHEMA);
-                auto_swap = g_settings_get_boolean (settings,
-                                                 GIBBON_PREFS_MATCH_AUTO_SWAP);
-                g_object_unref (settings);
-                if (auto_swap)
-                        self->priv->position->dice_swapped =
-                                        !self->priv->position->dice_swapped;
-        }
+        gibbon_session_auto_swap_dice (self, self->priv->position);
 
         pos = self->priv->position;
 
@@ -3335,11 +3327,9 @@ static void
 gibbon_session_on_dice_picked_up (const GibbonSession *self)
 {
         const GibbonPosition *pos;
-        GibbonPosition *new_pos;
         GibbonBoard *board;
         GibbonMove *move;
         gchar *fibs_move;
-        gint tmp;
 
         g_return_if_fail (GIBBON_IS_SESSION (self));
 
@@ -3371,23 +3361,12 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         /*
          * If not all dice were used, and the move was not legal, we assume
          * that the user wants to switch the dice.
-         *
-         * We only store the position with the switched dice with the board.
-         * Triggering an undo will restore the original state of the dice.
          */
         if (move->status != GIBBON_MOVE_LEGAL && pos->unused_dice[0]) {
                 g_object_unref (move);
-                new_pos = gibbon_position_copy (pos);
-                tmp = pos->dice[0];
-                new_pos->dice[0] = new_pos->dice[1];
-                new_pos->dice[1] = tmp;
-                if (new_pos->unused_dice[1]) {
-                        tmp = pos->unused_dice[0];
-                        new_pos->unused_dice[0] = new_pos->unused_dice[1];
-                        new_pos->unused_dice[1] = tmp;
-                }
-                gibbon_board_set_position (board, new_pos);
-                gibbon_position_free (new_pos);
+                self->priv->position->dice_swapped =
+                                !self->priv->position->dice_swapped;
+                gibbon_board_set_position (board, self->priv->position);
                 return;
         }
 
@@ -3596,6 +3575,7 @@ gibbon_session_reset_position (GibbonSession *self)
 
         board = gibbon_app_get_board (self->priv->app);
         gibbon_position_reset_unused_dice (self->priv->position);
+        gibbon_session_auto_swap_dice (self, self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
 }
 
@@ -3894,4 +3874,28 @@ gibbon_session_check_address (GibbonSession *self, const gchar *remote_email)
         g_free (local_email);
 
         self->priv->address_checked = TRUE;
+}
+
+static void
+gibbon_session_auto_swap_dice (const GibbonSession *self, GibbonPosition *pos)
+{
+        GSettings *settings;
+
+        pos->dice_swapped = FALSE;
+
+        if (pos->dice[0] < pos->dice[1]) {
+                settings = g_settings_new (GIBBON_PREFS_MATCH_SCHEMA);
+                if (g_settings_get_boolean (settings,
+                                            GIBBON_PREFS_MATCH_AUTO_SWAP))
+                        pos->dice_swapped = !pos->dice_swapped;
+                g_object_unref (settings);
+        }
+
+        if (GTK_TEXT_DIR_RTL == gtk_widget_get_default_direction ())
+                pos->dice_swapped = !pos->dice_swapped;
+
+        pos->unused_dice[0] = pos->dice_swapped
+                        ? pos->unused_dice[1] : pos->unused_dice[0];
+        pos->unused_dice[1] = pos->dice_swapped
+                        ? pos->unused_dice[0] : pos->unused_dice[1];
 }
