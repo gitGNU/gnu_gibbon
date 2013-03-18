@@ -1887,6 +1887,8 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         gint64 dice[2];
         GibbonPosition *pos;
         GibbonCLIPReader *clip_reader = self->priv->clip_reader;
+        GSettings *settings;
+        gboolean auto_swap;
 
         if (!gibbon_clip_reader_get_string (clip_reader, &iter, &who))
                 return -1;
@@ -1928,6 +1930,16 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
                                          (guint) dice[0], (guint) dice[1]);
         } else {
                 return -1;
+        }
+
+        if (self->priv->position->dice[0] < self->priv->position->dice[1]) {
+                settings = g_settings_new (GIBBON_PREFS_MATCH_SCHEMA);
+                auto_swap = g_settings_get_boolean (settings,
+                                                 GIBBON_PREFS_MATCH_AUTO_SWAP);
+                g_object_unref (settings);
+                if (auto_swap)
+                        self->priv->position->dice_swapped =
+                                        !self->priv->position->dice_swapped;
         }
 
         pos = self->priv->position;
