@@ -30,11 +30,15 @@
   <schema id="bg.gibbon.preferences.match"
           path="/bg/gibbon/preferences/match/">
     <key name="length" type="u">
-      <!-- FIXME! Change unlimited to 0 so that we have a valid range.  -->
       <range min="0" max="99"/>
       <default>5</default>
       <_summary>Preferred match length</_summary>
       <_description>Preferred match length (-1 for unlimited).</_description>
+    </key>
+    <key name="auto-swap" type="b">
+      <default>true</default>
+      <_summary>Automatically swap dice</_summary>
+      <_description>Automatically swap dice so that the higher die lies at the left.</_description>
     </key>
     <key name="ready" type="b">
       <default>false</default>
