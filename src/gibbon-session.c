@@ -1587,6 +1587,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 gibbon_position_free (self->priv->position);
 
         self->priv->position = gibbon_position_copy (pos);
+        gibbon_session_auto_swap_dice (self, self->priv->position);
 
         board = gibbon_app_get_board (self->priv->app);
         if (gibbon_position_equals_technically (pos,

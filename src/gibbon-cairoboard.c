@@ -932,12 +932,13 @@ gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr)
         g_return_if_fail (dice[0] <= 6);
         g_return_if_fail (dice[1] <= 6);
 
-        g_printerr ("Turn: %d, dice: %u%u\n", self->priv->pos->turn, dice[0], dice[1]);
-        if (dice[0])
+        if (self->priv->pos->dice_swapped) {
+                gibbon_cairoboard_draw_die (self, cr, dice[0], 1);
+                gibbon_cairoboard_draw_die (self, cr, dice[1], 0);
+        } else {
                 gibbon_cairoboard_draw_die (self, cr, dice[0], 0);
-
-        if (dice[1])
                 gibbon_cairoboard_draw_die (self, cr, dice[1], 1);
+        }
 }
 
 static void
@@ -951,7 +952,9 @@ gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
-        g_return_if_fail (value != 0);
+        if (!value)
+                return;
+
         g_return_if_fail (value <= 6);
 
         top = self->priv->point24->y;
