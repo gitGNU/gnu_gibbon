@@ -1902,16 +1902,10 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         if (0 == g_strcmp0 ("You", who)) {
                 self->priv->position->dice[0] = dice[0];
                 self->priv->position->dice[1] = dice[1];
-                self->priv->position->unused_dice[0] = dice[0];
-                self->priv->position->unused_dice[1] = dice[1];
                 g_free (self->priv->position->status);
                 self->priv->position->status =
                         g_strdup_printf (_("You roll %u and %u."),
                                          (guint) dice[0], (guint) dice[1]);
-                if (dice[0] == dice[1])
-                        self->priv->position->unused_dice[2]
-                        = self->priv->position->unused_dice[3]
-                        = dice[0];
         } else if (0 == g_strcmp0 (self->priv->opponent, who)) {
                 self->priv->position->dice[0] = dice[0];
                 self->priv->position->dice[1] = dice[1];
@@ -1937,7 +1931,6 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
 
         pos = self->priv->position;
 
-        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app), pos);
 
 g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
@@ -2530,8 +2523,7 @@ gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
                  */
                 self->priv->position->dice[0] = 0;
                 self->priv->position->dice[1] = 0;
-                self->priv->position->unused_dice[0] = 0;
-                self->priv->position->unused_dice[1] = 0;
+                gibbon_position_reset_unused_dice (self->priv->position);
         }
 
         return GIBBON_CLIP_CANNOT_MOVE;
@@ -3882,10 +3874,17 @@ gibbon_session_auto_swap_dice (const GibbonSession *self, GibbonPosition *pos)
 {
         GSettings *settings;
 
+        g_printerr ("auto swapping dice\n");
         pos->dice_swapped = FALSE;
 
         if (pos->dice[0] < pos->dice[1]) {
+                g_printerr ("lower is left\n");
                 settings = g_settings_new (GIBBON_PREFS_MATCH_SCHEMA);
+                if (g_settings_get_boolean (settings,
+                                            GIBBON_PREFS_MATCH_AUTO_SWAP))
+                        g_printerr ("auto-swap active!\n");
+                else
+                        g_printerr ("auto-swap inactive!\n");
                 if (g_settings_get_boolean (settings,
                                             GIBBON_PREFS_MATCH_AUTO_SWAP))
                         pos->dice_swapped = !pos->dice_swapped;
@@ -3893,10 +3892,13 @@ gibbon_session_auto_swap_dice (const GibbonSession *self, GibbonPosition *pos)
         }
 
         if (GTK_TEXT_DIR_RTL == gtk_widget_get_default_direction ())
+                g_printerr ("rtl!\n");
+        if (GTK_TEXT_DIR_RTL == gtk_widget_get_default_direction ())
                 pos->dice_swapped = !pos->dice_swapped;
 
-        pos->unused_dice[0] = pos->dice_swapped
-                        ? pos->unused_dice[1] : pos->unused_dice[0];
-        pos->unused_dice[1] = pos->dice_swapped
-                        ? pos->unused_dice[0] : pos->unused_dice[1];
+        gibbon_position_reset_unused_dice (pos);
+
+        g_printerr ("Dice after auto swap: %u%d (%u%u)\n",
+                        pos->dice[0], pos->dice[1],
+                        pos->unused_dice[0], pos->unused_dice[1]);
 }

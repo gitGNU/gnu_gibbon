@@ -162,16 +162,18 @@ gibbon_board_redraw (const GibbonBoard *self)
 
 void
 gibbon_board_process_point_click (GibbonBoard *self, gint point,
-                                  gint button)
+                                  gint real_button)
 {
         const GibbonPosition *pos;
         GibbonPosition *new_pos = NULL;
         gint pips;
         gint i;
+        gint button;
 
         g_return_if_fail (GIBBON_IS_BOARD (self));
         g_return_if_fail (point >= 1);
         g_return_if_fail (point <= 24);
+        g_return_if_fail (real_button == 1 || real_button == 3);
 
         /*
          * This is an impartial legality check.  We only handle the trivial
@@ -184,8 +186,16 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
                 return;
 
         /* Only one die left? */
-        if (!pos->unused_dice[1])
+        if (!pos->unused_dice[1]) {
                 button = 1;
+        } else if (pos->dice_swapped) {
+                if (real_button == 1)
+                        button = 3;
+                else
+                        button = 1;
+        } else {
+                button = real_button;
+        }
 
         if (pos->turn != GIBBON_POSITION_SIDE_WHITE)
                 return;
@@ -243,7 +253,7 @@ bail_out_point_click:
          * one for the right die.
          */
         gibbon_position_free (new_pos);
-        if (button == 1 && pos->unused_dice[1]
+        if (real_button == 1 && pos->unused_dice[1]
             && pos->unused_dice[0] != pos->unused_dice[1])
                 gibbon_board_process_point_click (self, point, 3);
 }
