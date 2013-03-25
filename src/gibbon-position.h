@@ -120,6 +120,11 @@ struct _GibbonPosition
         guint64 score;
 
         /*
+         * Should the dice be displayed in opposite order?
+         */
+        gboolean dice_swapped;
+
+        /*
          * All properties above this comment are considered `significant'.
          * Significant differences lead to a termination of a currently
          * running animation of a move.
@@ -131,11 +136,6 @@ struct _GibbonPosition
 
         gchar *game_info;
         gchar *status;
-
-        /*
-         * Should the dice be displayed in opposite order?
-         */
-        gboolean dice_swapped;
 };
 
 GType gibbon_position_get_type (void) G_GNUC_CONST;
