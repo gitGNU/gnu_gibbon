@@ -1586,8 +1586,8 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
 
+        gibbon_session_auto_swap_dice (self, pos);
         self->priv->position = gibbon_position_copy (pos);
-        gibbon_session_auto_swap_dice (self, self->priv->position);
 
         board = gibbon_app_get_board (self->priv->app);
         if (gibbon_position_equals_technically (pos,
@@ -3887,7 +3887,7 @@ gibbon_session_auto_swap_dice (const GibbonSession *self, GibbonPosition *pos)
                         g_printerr ("auto-swap inactive!\n");
                 if (g_settings_get_boolean (settings,
                                             GIBBON_PREFS_MATCH_AUTO_SWAP))
-                        pos->dice_swapped = !pos->dice_swapped;
+                        pos->dice_swapped = TRUE;
                 g_object_unref (settings);
         }
 
