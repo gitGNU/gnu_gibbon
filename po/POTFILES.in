@@ -70,7 +70,6 @@ src/gibbon-cairoboard.c
 src/gibbon-chat.c
 src/gibbon-chat-view.c
 src/gibbon-client-icons.c
-src/gibbon-clip.c
 src/gibbon-connection.c
 src/gibbon-connection-dialog.c
 src/gibbon-convert.c
