@@ -1157,10 +1157,9 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         gchar *endptr;
         guint i;
         guint64 plies;
-        gboolean cubeful, deterministic, use_prune;
+        gboolean cubeful;
         gchar *encoded_move;
         gdouble p[6];
-        gdouble noise;
         gsize l, num_movements;
         GibbonMove *move;
         GibbonMovement *movement;
@@ -1225,9 +1224,9 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         /* Token #11 is always 0.  Ignore it.  */
 
         if ('1' == tokens[12][0])
-                deterministic = TRUE;
+                ;
         else if ('0' == tokens[12][0])
-                deterministic = FALSE;
+                ;
         else {
                 if (self->priv->debug)
                         g_message ("Expected [01] in det. flag for A not '%s'.",
@@ -1241,7 +1240,8 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         }
 
         errno = 0;
-        noise = g_ascii_strtod (tokens[13], &endptr);
+        /* noise = */
+        (void) g_ascii_strtod (tokens[13], &endptr);
         if (errno || !endptr || *endptr) {
                 if (self->priv->debug)
                         g_message ("Garbage number in A record: %s.",
@@ -1250,9 +1250,9 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         }
 
         if ('1' == tokens[14][0])
-                use_prune = TRUE;
+                ;
         else if ('0' == tokens[6][0])
-                use_prune = FALSE;
+                ;
         else {
                 if (self->priv->debug)
                         g_message ("Expected [01] in prune flag for A not '%s'.",
