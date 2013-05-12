@@ -385,7 +385,7 @@ svg_status_t
 _svg_element_parse_aspect_ratio (const char *aspect_ratio_str,
 				 svg_view_box_t *view_box)
 {
-    const char *start, *end;
+    const char *start;
     if (strlen (aspect_ratio_str) < 8)
 	return SVG_STATUS_SUCCESS;
 
@@ -411,7 +411,6 @@ _svg_element_parse_aspect_ratio (const char *aspect_ratio_str,
 	view_box->aspect_ratio = SVG_PRESERVE_ASPECT_RATIO_NONE;
 
     start = aspect_ratio_str + 8;
-    end = aspect_ratio_str + strlen (aspect_ratio_str) + 1;
 
 	_svg_str_skip_space (&start);
 
