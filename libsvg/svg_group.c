@@ -146,6 +146,7 @@ _svg_group_apply_svg_attributes (svg_group_t	*group,
 				 const char	**attributes)
 {
     const char *view_box_str, *aspect_ratio_str;
+    svgint_status_t status;
 
     _svg_attribute_get_length (attributes, "width", &group->width, "100%");
     _svg_attribute_get_length (attributes, "height", &group->height, "100%");
@@ -158,8 +159,23 @@ _svg_group_apply_svg_attributes (svg_group_t	*group,
 
     if (view_box_str)
     {
+        status = _svg_element_parse_view_box (view_box_str,
+                                              &group->view_box.box.x,
+                                              &group->view_box.box.y,
+                                              &group->view_box.box.width,
+                                              &group->view_box.box.height);
+        if (status)
+                return status;
+
 	group->view_box.aspect_ratio = SVG_PRESERVE_ASPECT_RATIO_NONE;
 	_svg_attribute_get_string (attributes, "preserveAspectRatio", &aspect_ratio_str, NULL);
+        if (aspect_ratio_str)
+        {
+            status = _svg_element_parse_aspect_ratio (aspect_ratio_str,
+                                                      &group->view_box);
+            if (status)
+                return status;
+        }
     }
 
     return SVG_STATUS_SUCCESS;
