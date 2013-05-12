@@ -487,11 +487,9 @@ gibbon_geo_ip_updater_parse (GibbonGeoIPUpdater *self, const gchar *line_start,
         gchar *to_ip;
         guint max_ip = 4294967295U;
         guint num;
-        gchar *registry;
         gchar *timestamp;
         gchar *alpha2;
         gchar *alpha3;
-        gchar *country;
         gdouble fraction;
 
         ++self->priv->lineno;
@@ -569,7 +567,6 @@ gibbon_geo_ip_updater_parse (GibbonGeoIPUpdater *self, const gchar *line_start,
                 goto parse_error;
         ++ptr;
 
-        registry = ptr;
         while (*ptr) {
                 if ('"' == *ptr)
                         break;
@@ -656,7 +653,6 @@ gibbon_geo_ip_updater_parse (GibbonGeoIPUpdater *self, const gchar *line_start,
                 goto parse_error;
         ++ptr;
 
-        country = ptr;
         while (*ptr) {
                 if ('"' == *ptr)
                         break;
