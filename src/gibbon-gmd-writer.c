@@ -140,16 +140,10 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
         gsize game_number;
         GibbonGame *game;
         gchar *buffer;
-        gsize match_length;
-        gsize num_games;
         gchar *raw;
 
         self = GIBBON_GMD_WRITER (_self);
         g_return_val_if_fail (self != NULL, FALSE);
-
-        match_length = gibbon_match_get_length (match);
-
-        num_games = gibbon_match_get_number_of_games (match);
 
         buffer = g_strdup_printf ("GMD-%u # Created by Gibbon version %s\n",
                                   GIBBON_GMD_REVISION, VERSION);
