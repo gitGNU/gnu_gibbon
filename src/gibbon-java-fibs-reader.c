@@ -427,14 +427,13 @@ _gibbon_java_fibs_reader_score (GibbonJavaFIBSReader *self,
                                 const gchar *winner, guint points_winner,
                                 const gchar *loser, guint points_loser)
 {
-        const gchar *white, *black;
+        const gchar *black;
         GibbonMatch *match;
 
         g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
         g_return_val_if_fail (self->priv->match, FALSE);
 
         match = self->priv->match;
-        white = gibbon_match_get_white (match);
 
         if (self->priv->white && g_strcmp0 ("You", self->priv->white))
                 return TRUE;
