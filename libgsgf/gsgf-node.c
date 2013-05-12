@@ -347,7 +347,6 @@ gsgf_node_cook (GSGFComponent *_self, GSGFComponent **culprit, GError **error)
         GHashTableIter iter;
         gpointer key, value;
         GList *loser;
-        const GSGFFlavor *flavor;
         GSGFNode *self;
         GSGFComponentIface *iface;
 
@@ -357,8 +356,6 @@ gsgf_node_cook (GSGFComponent *_self, GSGFComponent **culprit, GError **error)
         gsgf_return_val_if_fail (GSGF_IS_NODE (_self), FALSE, error);
 
         self = GSGF_NODE (_self);
-
-        flavor = gsgf_game_tree_get_flavor (self->priv->parent);
 
         g_hash_table_iter_init (&iter, self->priv->properties);
         while (g_hash_table_iter_next(&iter, &key, &value)) {
