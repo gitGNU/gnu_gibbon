@@ -24,7 +24,7 @@
 #include <locale.h>
 #include <string.h>
 
-static GMutex *gsgf_threads_mutex = NULL;
+static GMutex gsgf_threads_mutex;
 
 #if HAVE_XLOCALE_API
 # if HAVE_XLOCALE_H
@@ -59,7 +59,7 @@ gsgf_threads_init (void)
                 g_error ("gsgf_thread_init() must be called before"
                          " gsgf_threads_init()");
 
-        gsgf_threads_mutex = g_mutex_new ();
+        g_mutex_init (&gsgf_threads_mutex);
 
 #if HAVE_XLOCALE_API
         gsgf_posix_locale = newlocale (LC_ALL_MASK, "POSIX", NULL);
