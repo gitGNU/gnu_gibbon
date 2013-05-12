@@ -454,12 +454,10 @@ gboolean
 _gibbon_jelly_fish_reader_reject_resign (GibbonJellyFishReader *self,
                                         const gchar *name)
 {
-        GibbonGameAction *action;
-
         g_return_val_if_fail (GIBBON_IS_JELLY_FISH_READER (self), FALSE);
         g_return_val_if_fail (self->priv->match, FALSE);
 
-        action = GIBBON_GAME_ACTION (gibbon_reject_new ());
+        /* FIXME: Why always return FALSE here? */
 
         return FALSE;
 }
