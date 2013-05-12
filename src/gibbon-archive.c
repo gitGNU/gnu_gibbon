@@ -185,7 +185,6 @@ gibbon_archive_new (GError **error)
 {
         GibbonArchive *self;
         const gchar *documents_servers_directory;
-        gboolean first_run = FALSE;
         gchar *db_path;
         mode_t mode;
 
@@ -203,9 +202,6 @@ gibbon_archive_new (GError **error)
 
         self->priv->servers_directory = g_build_filename (documents_servers_directory,
                                                   PACKAGE, "servers", NULL);
-
-        if (!g_file_test (self->priv->servers_directory, G_FILE_TEST_EXISTS))
-                first_run = TRUE;
 
 #ifdef G_OS_WIN32
 	mode = S_IRWXU;
