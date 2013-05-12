@@ -447,7 +447,6 @@ gibbon_database_initialize (GibbonDatabase *self, GError **error)
         gint reply;
         sqlite3 *dbh;
         gboolean drop_first = FALSE;
-        gboolean new_database = FALSE;
         const gchar *sql_select_version =
                         "SELECT major, minor FROM version";
 
@@ -469,8 +468,6 @@ gibbon_database_initialize (GibbonDatabase *self, GError **error)
                                                        G_TYPE_INT, &minor,
                                                        -1);
                 sqlite3_finalize (stmt);
-        } else {
-                new_database = TRUE;
         }
 
         if (major == GIBBON_DATABASE_SCHEMA_MAJOR
@@ -1622,7 +1619,6 @@ gibbon_database_check_ip2country (GibbonDatabase *self, GError **error)
 {
         gint64 last_update;
         gint64 now;
-        guint64 diff;
 
         if (!gibbon_database_begin_transaction (self, NULL))
                 return FALSE;
@@ -1648,7 +1644,6 @@ gibbon_database_check_ip2country (GibbonDatabase *self, GError **error)
                 last_update = 0;
 
         now = g_get_real_time ();
-        diff = now - last_update;
 
         if (now - last_update >= 30ULL * 24 * 60 * 60 * 1000000)
                 self->priv->geo_ip_updater =
