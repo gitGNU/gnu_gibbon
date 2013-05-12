@@ -154,15 +154,12 @@ gibbon_java_fibs_writer_write_stream (const GibbonMatchWriter *_self,
         unsigned long long cs[2];
         gint score;
         gsize match_length;
-        gsize num_games;
         const gchar *winner, *loser;
 
         self = GIBBON_JAVA_FIBS_WRITER (_self);
         g_return_val_if_fail (self != NULL, FALSE);
 
         match_length = gibbon_match_get_length (match);
-
-        num_games = gibbon_match_get_number_of_games (match);
 
         prolog = g_strdup_printf ("%s\015\0128:%s:%llu\015\012",
                                   GIBBON_JAVA_FIBS_PROLOG,
