@@ -178,7 +178,6 @@ GibbonGame *
 gibbon_match_add_game (GibbonMatch *self, GError **error)
 {
         GibbonGame *game;
-        guint game_number;
         GibbonPosition *position;
         gboolean is_crawford = FALSE;
         gint white_away, black_away;
@@ -259,7 +258,6 @@ gibbon_match_add_game (GibbonMatch *self, GError **error)
          * that the last match
          */
     no_crawford:
-        game_number = g_list_length (self->priv->games);
         game = gibbon_game_new (self, position,
                                 self->priv->crawford, is_crawford);
         gibbon_position_free (position);
@@ -531,7 +529,6 @@ gibbon_match_get_missing_actions (const GibbonMatch *self,
         GSList *result;
         const GibbonPosition *last_pos;
         GibbonPosition *current;
-        GibbonGame *current_game;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
         g_return_val_if_fail (target != NULL, FALSE);
@@ -566,8 +563,6 @@ gibbon_match_get_missing_actions (const GibbonMatch *self,
                 if (target->scores[1] - last_pos->scores[1]
                     > 6 * last_pos->cube)
                         return FALSE;
-
-                current_game = gibbon_match_get_current_game (self);
 
                 current = gibbon_position_copy (last_pos);
         } else {
@@ -604,7 +599,6 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
 {
         GSList *retval = NULL;
         GSList *head;
-        const GibbonPosition *initial;
         GTimeVal timeval;
         struct tm *now;
 
@@ -633,7 +627,6 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                         try_move = FALSE;
                 }
         } else {
-                initial = gibbon_position_initial ();
                 /*
                  * Handle the case after an initial opening double.
                  */
