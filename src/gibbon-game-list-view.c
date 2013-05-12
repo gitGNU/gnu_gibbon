@@ -209,12 +209,10 @@ gibbon_game_list_view_set_state (const GibbonGameListView *self)
 static void
 gibbon_game_list_view_back (const GibbonGameListView *self)
 {
-        GtkTreeModel *model;
         gint active;
 
         g_return_if_fail (GIBBON_IS_GAME_LIST_VIEW (self));
 
-        model = gtk_combo_box_get_model (self->priv->combo);
         active = gtk_combo_box_get_active (self->priv->combo);
 
         if (active < 1)
