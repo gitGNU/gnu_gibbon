@@ -2662,7 +2662,6 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
         const gchar *who;
         guint points;
         gint score, i;
-        GibbonPositionSide side;
         GibbonPosition *try;
         GibbonMove *move;
         gboolean reverse;
@@ -2729,8 +2728,6 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
             && !self->priv->position->resigned
             && self->priv->position->dice[0]) {
                 try = gibbon_position_copy (self->priv->position);
-                side = score < 0 ? GIBBON_POSITION_SIDE_BLACK
-                                 : GIBBON_POSITION_SIDE_WHITE;
                 for (i = 0; i < 24; ++i) {
                         /*
                          * If the product of the score and the "number" of
